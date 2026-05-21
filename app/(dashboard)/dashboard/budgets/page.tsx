@@ -101,10 +101,8 @@ export default function BudgetsPage() {
             <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-orange-600">${totalSpent.toFixed(2)}</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {((totalSpent / totalBudgeted) * 100).toFixed(1)}% of budget
-            </p>
+            <p className="text-2xl font-bold">${totalSpent.toFixed(2)}</p>
+            <p className="text-xs text-muted-foreground mt-1">This month</p>
           </CardContent>
         </Card>
 
@@ -119,58 +117,48 @@ export default function BudgetsPage() {
         </Card>
       </div>
 
-      {/* Budgets List */}
-      <div className="space-y-4">
+      {/* Budgets Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {budgets.map((budget) => {
           const percentage = (budget.spent / budget.budgeted) * 100;
           return (
             <Card key={budget.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-4">
+              <CardHeader className="flex flex-row items-start justify-between space-y-0">
                 <div className="flex items-center gap-3">
-                  <div className="size-10 rounded-lg bg-muted flex items-center justify-center text-lg">
+                  <div
+                    className="size-12 rounded-lg flex items-center justify-center text-2xl"
+                    style={{ backgroundColor: `${budget.color}20` }}
+                  >
                     {budget.icon}
                   </div>
                   <div>
                     <h3 className="font-semibold">{budget.category}</h3>
                     <p className={`text-sm font-medium ${getStatusColor(percentage)}`}>
-                      {percentage.toFixed(1)}% used
+                      {percentage.toFixed(0)}% spent
                     </p>
                   </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="ghost" size="icon" className="size-8">
-                    <Edit2 className="size-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="size-8">
-                    <Trash2 className="size-4" />
-                  </Button>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-3">
-                {/* Progress Bar */}
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div
-                    className={`h-2 rounded-full transition-all ${getProgressColor(percentage)}`}
-                    style={{ width: `${Math.min(percentage, 100)}%` }}
-                  />
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Budget</span>
+                    <span className="font-semibold">${budget.budgeted.toFixed(2)}</span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full ${getProgressColor(percentage)}`}
+                      style={{ width: `${Math.min(percentage, 100)}%` }}
+                    />
+                  </div>
                 </div>
-
-                {/* Budget Details */}
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div>
-                    <p className="text-muted-foreground">Budgeted</p>
-                    <p className="font-semibold">${budget.budgeted.toFixed(2)}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">Spent</p>
-                    <p className="font-semibold">${budget.spent.toFixed(2)}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">Remaining</p>
-                    <p className={`font-semibold ${budget.remaining >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      ${budget.remaining.toFixed(2)}
-                    </p>
-                  </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Spent</span>
+                  <span className="font-semibold">${budget.spent.toFixed(2)}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Remaining</span>
+                  <span className="font-semibold text-green-600">${budget.remaining.toFixed(2)}</span>
                 </div>
               </CardContent>
             </Card>
