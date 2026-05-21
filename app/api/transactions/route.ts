@@ -1,20 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedSupabase, handleApiError } from '@/lib/supabase/server-api';
 
 // GET - Buscar todas as transações do usuário
 export async function GET(req: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    // Obter o usuário autenticado
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const { supabase, user } = await getAuthenticatedSupabase();
 
     // Buscar transações do usuário
     const { data: transactions, error } = await supabase
@@ -29,28 +19,14 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(transactions);
   } catch (error) {
-    console.error('Get transactions error:', error);
-    return NextResponse.json(
-      { error: 'An error occurred while fetching transactions' },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
 
 // POST - Criar nova transação
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    // Obter o usuário autenticado
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const { supabase, user } = await getAuthenticatedSupabase();
 
     const { title, description, amount, type, category_id, account_id, transaction_date } = await req.json();
 
@@ -85,10 +61,6 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Create transaction error:', error);
-    return NextResponse.json(
-      { error: 'An error occurred while creating the transaction' },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
