@@ -1,74 +1,58 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Plus, Edit2, Trash2, TrendingUp } from 'lucide-react';
+import { Plus, Trash2, AlertCircle } from 'lucide-react';
+import { useState } from 'react';
+import { useBudgets } from '@/hooks/use-budgets';
+import { useCategories } from '@/hooks/use-categories';
+import { AddBudgetForm } from '@/components/budgets/add-budget-form';
 
 export default function BudgetsPage() {
-  const budgets = [
-    {
-      id: '1',
-      category: 'Housing',
-      icon: '🏠',
-      budgeted: 1500.00,
-      spent: 1248.20,
-      remaining: 251.80,
-      color: '#FF6B6B',
-    },
-    {
-      id: '2',
-      category: 'Food & Dining',
-      icon: '🍽️',
-      budgeted: 800.00,
-      spent: 624.30,
-      remaining: 175.70,
-      color: '#FFA94D',
-    },
-    {
-      id: '3',
-      category: 'Transport',
-      icon: '🚗',
-      budgeted: 600.00,
-      spent: 468.10,
-      remaining: 131.90,
-      color: '#FFD93D',
-    },
-    {
-      id: '4',
-      category: 'Entertainment',
-      icon: '🎬',
-      budgeted: 400.00,
-      spent: 249.80,
-      remaining: 150.20,
-      color: '#A78BFA',
-    },
-    {
-      id: '5',
-      category: 'Utilities',
-      icon: '💡',
-      budgeted: 250.00,
-      spent: 200.00,
-      remaining: 50.00,
-      color: '#74B9FF',
-    },
-  ];
+  const { budgets, loading, deleteBudget, fetchBudgets } = useBudgets();
+  const { categories } = useCategories();
+  const [showForm, setShowForm] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const getStatusColor = (percentage: number) => {
-    if (percentage <= 50) return 'text-green-600';
-    if (percentage <= 75) return 'text-yellow-600';
-    return 'text-red-600';
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this budget?')) return;
+
+    try {
+      setDeletingId(id);
+      await deleteBudget(id);
+    } catch (error) {
+      alert('Failed to delete budget');
+    } finally {
+      setDeletingId(null);
+    }
   };
 
-  const getProgressColor = (percentage: number) => {
-    if (percentage <= 50) return 'bg-green-600';
-    if (percentage <= 75) return 'bg-yellow-600';
-    return 'bg-red-600';
+  const getCategoryName = (categoryId: string) => {
+    return categories.find((c) => c.id === categoryId)?.name || 'Unknown';
   };
 
-  const totalBudgeted = budgets.reduce((sum, b) => sum + b.budgeted, 0);
-  const totalSpent = budgets.reduce((sum, b) => sum + b.spent, 0);
-  const totalRemaining = budgets.reduce((sum, b) => sum + b.remaining, 0);
+  const getCategoryIcon = (categoryId: string) => {
+    return categories.find((c) => c.id === categoryId)?.icon || '📁';
+  };
+
+  const getMonthName = (month: number) => {
+    return new Date(2024, month - 1).toLocaleString('default', {
+      month: 'long',
+    });
+  };
+
+  const budgetsByMonth = budgets.reduce(
+    (acc, budget) => {
+      const key = `${budget.year}-${String(budget.month).padStart(2, '0')}`;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(budget);
+      return acc;
+    },
+    {} as Record<string, typeof budgets>
+  );
+
+  const sortedMonths = Object.keys(budgetsByMonth).sort().reverse();
 
   return (
     <div className="space-y-6 p-6">
@@ -76,95 +60,94 @@ export default function BudgetsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Budgets</h1>
-          <p className="text-muted-foreground mt-2">Track and manage your monthly budgets</p>
+          <p className="text-muted-foreground mt-2">Set and track spending limits for each category</p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => setShowForm(!showForm)}>
           <Plus className="size-4" />
-          New Budget
+          {showForm ? 'Cancel' : 'New Budget'}
         </Button>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Budgeted</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">${totalBudgeted.toFixed(2)}</p>
-            <p className="text-xs text-muted-foreground mt-1">This month</p>
-          </CardContent>
-        </Card>
+      {/* Add Budget Form */}
+      {showForm && (
+        <AddBudgetForm
+          onSuccess={() => {
+            setShowForm(false);
+            fetchBudgets();
+          }}
+          onCancel={() => setShowForm(false)}
+        />
+      )}
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">${totalSpent.toFixed(2)}</p>
-            <p className="text-xs text-muted-foreground mt-1">This month</p>
-          </CardContent>
-        </Card>
+      {/* Budgets by Month */}
+      {sortedMonths.length > 0 && (
+        <div className="space-y-6">
+          {sortedMonths.map((monthKey) => {
+            const [year, month] = monthKey.split('-');
+            const monthBudgets = budgetsByMonth[monthKey];
+            const monthName = getMonthName(parseInt(month));
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Remaining</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-green-600">${totalRemaining.toFixed(2)}</p>
-            <p className="text-xs text-muted-foreground mt-1">Available to spend</p>
-          </CardContent>
-        </Card>
-      </div>
+            return (
+              <div key={monthKey} className="space-y-3">
+                <h2 className="text-lg font-semibold">
+                  {monthName} {year}
+                </h2>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {monthBudgets.map((budget) => (
+                    <Card key={budget.id} className="hover:shadow-lg transition-shadow">
+                      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="text-2xl">
+                            {getCategoryIcon(budget.category_id)}
+                          </div>
+                          <div>
+                            <h3 className="font-semibold">{getCategoryName(budget.category_id)}</h3>
+                            <Badge variant="outline" className="mt-1 text-xs">
+                              Budget
+                            </Badge>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(budget.id)}
+                          disabled={deletingId === budget.id}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="size-4" />
+                        </Button>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">Limit</span>
+                            <span className="text-lg font-semibold">
+                              ${budget.amount_limit.toFixed(2)}
+                            </span>
+                          </div>
+                          <div className="pt-2 border-t">
+                            <p className="text-xs text-muted-foreground">
+                              Created {new Date(budget.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
-      {/* Budgets Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {budgets.map((budget) => {
-          const percentage = (budget.spent / budget.budgeted) * 100;
-          return (
-            <Card key={budget.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-start justify-between space-y-0">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="size-12 rounded-lg flex items-center justify-center text-2xl"
-                    style={{ backgroundColor: `${budget.color}20` }}
-                  >
-                    {budget.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">{budget.category}</h3>
-                    <p className={`text-sm font-medium ${getStatusColor(percentage)}`}>
-                      {percentage.toFixed(0)}% spent
-                    </p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Budget</span>
-                    <span className="font-semibold">${budget.budgeted.toFixed(2)}</span>
-                  </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full ${getProgressColor(percentage)}`}
-                      style={{ width: `${Math.min(percentage, 100)}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Spent</span>
-                  <span className="font-semibold">${budget.spent.toFixed(2)}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Remaining</span>
-                  <span className="font-semibold text-green-600">${budget.remaining.toFixed(2)}</span>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+      {/* Empty State */}
+      {budgets.length === 0 && !loading && (
+        <div className="text-center py-12 rounded-lg border-2 border-dashed">
+          <AlertCircle className="size-12 mx-auto text-muted-foreground mb-3" />
+          <p className="text-muted-foreground">No budgets yet. Create one to set spending limits!</p>
+        </div>
+      )}
     </div>
   );
 }
