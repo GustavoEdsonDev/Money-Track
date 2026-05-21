@@ -1,6 +1,3 @@
-'use client';
-
-import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,12 +11,17 @@ import {
   Bell,
   Search,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { ReactNode } from 'react';
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+interface MenuItem {
+  href: string;
+  label: string;
+  icon: any;
+  exact?: boolean;
+}
 
-  const menuItems = [
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const menuItems: MenuItem[] = [
     {
       href: '/dashboard',
       label: 'Dashboard',
@@ -48,17 +50,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     },
   ];
 
-  const isActive = (href: string, exact?: boolean) => {
-    if (exact) {
-      return pathname === href;
-    }
-    return pathname.startsWith(href);
-  };
-
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background" suppressHydrationWarning>
       {/* Sidebar */}
-      <aside className="w-64 border-r bg-card">
+      <aside className="w-64 border-r bg-card flex flex-col">
         {/* Logo */}
         <div className="p-6 border-b">
           <div className="flex items-center gap-2">
@@ -68,11 +63,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Main Navigation */}
-        <nav className="p-4 space-y-2">
-          {menuItems.map(({ href, label, icon: Icon, exact }) => (
+        <nav className="p-4 space-y-2 flex-1">
+          {menuItems.map(({ href, label, icon: Icon }) => (
             <Link key={href} href={href}>
               <Button
-                variant={isActive(href, exact) ? 'default' : 'ghost'}
+                variant="ghost"
                 className="w-full justify-start gap-3"
               >
                 <Icon className="size-4" />
@@ -83,14 +78,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         {/* Net Worth - Bottom Card */}
-        <div className="absolute bottom-24 left-4 right-4 p-4 bg-muted rounded-lg border">
-          <p className="text-xs text-muted-foreground mb-1">Net Worth</p>
-          <p className="text-xl font-bold text-green-600">$14,250.75</p>
-          <p className="text-xs text-green-600 mt-1">↑ 3.2% vs last month</p>
-        </div>
+        <div className="p-4 border-t">
+          <div className="p-4 bg-muted rounded-lg border mb-4">
+            <p className="text-xs text-muted-foreground mb-1">Net Worth</p>
+            <p className="text-xl font-bold text-green-600">$14,250.75</p>
+            <p className="text-xs text-green-600 mt-1">↑ 3.2% vs last month</p>
+          </div>
 
-        {/* User Profile - Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-card">
+          {/* User Profile */}
           <div className="flex items-center gap-3 mb-4">
             <div className="size-10 rounded-full bg-muted flex items-center justify-center">
               <span className="font-semibold">G</span>

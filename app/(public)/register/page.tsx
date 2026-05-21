@@ -4,27 +4,47 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Wallet } from 'lucide-react';
+import { Wallet, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth-context';
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { signUp, loading } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
+
     if (password !== confirmPassword) {
-      alert('Passwords do not match');
+      setError('Passwords do not match');
       return;
     }
-    setLoading(true);
-    // Handle registration logic here
-    setTimeout(() => setLoading(false), 1000);
+
+    if (!agreeTerms) {
+      setError('You must agree to the terms and conditions');
+      return;
+    }
+
+    try {
+      await signUp(email, password, name);
+      setSuccess('Account created! Check your email to confirm.');
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);
+    } catch (err: any) {
+      setError(err.message || 'Failed to create account');
+    }
   };
 
   return (
@@ -46,6 +66,22 @@ export default function RegisterPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Error Message */}
+              {error && (
+                <div className="flex gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
+                  <AlertCircle className="size-4 text-red-600 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-red-600">{error}</p>
+                </div>
+              )}
+
+              {/* Success Message */}
+              {success && (
+                <div className="flex gap-2 p-3 rounded-lg bg-green-50 border border-green-200">
+                  <AlertCircle className="size-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-green-600">{success}</p>
+                </div>
+              )}
+
               {/* Full Name */}
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
@@ -56,6 +92,7 @@ export default function RegisterPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -69,6 +106,7 @@ export default function RegisterPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -82,6 +120,7 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -95,6 +134,7 @@ export default function RegisterPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -106,6 +146,7 @@ export default function RegisterPage() {
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
                   required
+                  disabled={loading}
                   className="mt-1"
                 />
                 <label htmlFor="terms" className="text-sm text-muted-foreground cursor-pointer">
@@ -122,7 +163,14 @@ export default function RegisterPage() {
 
               {/* Register Button */}
               <Button type="submit" className="w-full" disabled={loading || !agreeTerms}>
-                {loading ? 'Creating Account...' : 'Create Account'}
+                {loading ? (
+                  <>
+                    <Loader2 className="size-4 mr-2 animate-spin" />
+                    Creating Account...
+                  </>
+                ) : (
+                  'Create Account'
+                )}
               </Button>
 
               {/* Divider */}
@@ -136,7 +184,7 @@ export default function RegisterPage() {
               </div>
 
               {/* Social Register */}
-              <Button type="button" variant="outline" className="w-full">
+              <Button type="button" variant="outline" className="w-full" disabled={loading}>
                 Sign up with Google
               </Button>
             </form>

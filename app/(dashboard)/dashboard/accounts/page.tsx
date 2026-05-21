@@ -105,21 +105,21 @@ export default function AccountsPage() {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Balance</p>
-                <p
-                  className={`text-2xl font-bold ${account.balance >= 0 ? 'text-green-600' : 'text-red-600'}`}
-                >
-                  {account.balance >= 0 ? '+' : '-'}${Math.abs(account.balance).toFixed(2)}
-                </p>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Balance</span>
+                  <span className={`text-lg font-semibold ${account.balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    ${account.balance.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Last Transaction</span>
+                  <span>{account.lastTransaction}</span>
+                </div>
               </div>
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>{account.currency}</span>
-                <span>Last: {account.lastTransaction}</span>
-              </div>
-              <Button className="w-full" variant="outline">
-                <CreditCard className="size-4 mr-2" />
+              <Button variant="outline" className="w-full mt-4 gap-2">
+                <CreditCard className="size-4" />
                 View Transactions
               </Button>
             </CardContent>

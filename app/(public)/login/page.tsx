@@ -4,20 +4,44 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Wallet } from 'lucide-react';
+import { Wallet, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth-context';
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { signIn, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    // Handle login logic here
-    setTimeout(() => setLoading(false), 1000);
+    setError('');
+
+    try {
+      await signIn(email, password);
+      router.push('/dashboard');
+    } catch (err: any) {
+      // Melhorar mensagem de erro
+      console.error('Login error:', err);
+      
+      let errorMessage = 'Failed to sign in';
+      
+      if (err.message?.includes('Invalid login credentials')) {
+        errorMessage = 'Email ou senha incorretos. Verifique seus dados.';
+      } else if (err.message?.includes('Email not confirmed')) {
+        errorMessage = 'Confirme seu email antes de fazer login. Verifique seu inbox.';
+      } else if (err.message?.includes('User not found')) {
+        errorMessage = 'Usuário não encontrado. Crie uma conta primeiro.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
+    }
   };
 
   return (
@@ -39,6 +63,14 @@ export default function LoginPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Error Message */}
+              {error && (
+                <div className="flex gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
+                  <AlertCircle className="size-4 text-red-600 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-red-600">{error}</p>
+                </div>
+              )}
+
               {/* Email */}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -49,6 +81,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -62,13 +95,14 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
 
               {/* Remember Me */}
               <div className="flex items-center justify-between text-sm">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" className="rounded" />
+                  <input type="checkbox" className="rounded" disabled={loading} />
                   Remember me
                 </label>
                 <Link href="#" className="text-blue-600 hover:underline">
@@ -78,7 +112,14 @@ export default function LoginPage() {
 
               {/* Login Button */}
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Signing in...' : 'Sign In'}
+                {loading ? (
+                  <>
+                    <Loader2 className="size-4 mr-2 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
               </Button>
 
               {/* Divider */}
@@ -92,7 +133,7 @@ export default function LoginPage() {
               </div>
 
               {/* Social Login */}
-              <Button type="button" variant="outline" className="w-full">
+              <Button type="button" variant="outline" className="w-full" disabled={loading}>
                 Sign in with Google
               </Button>
             </form>
