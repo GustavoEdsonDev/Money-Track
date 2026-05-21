@@ -1,87 +1,87 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getAuthenticatedSupabase, handleApiError, NotFoundError } from '@/lib/supabase/server-api';
 
-// GET - Buscar categoria por ID
 export async function GET(
-  req: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
     const { supabase, user } = await getAuthenticatedSupabase();
 
-    const { data: category, error } = await supabase
-      .from('categories')
+    const { data, error } = await supabase
+      .from('accounts')
       .select('*')
       .eq('id', params.id)
       .eq('user_id', user.id)
       .single();
 
-    if (error || !category) {
-      throw new NotFoundError('Category not found');
+    if (error || !data) {
+      throw new NotFoundError('Account not found');
     }
 
-    return NextResponse.json(category);
+    return NextResponse.json(data);
   } catch (error) {
     return handleApiError(error);
   }
 }
 
-// PUT - Atualizar categoria
 export async function PUT(
-  req: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
     const { supabase, user } = await getAuthenticatedSupabase();
 
-    const { name, type, color, icon } = await req.json();
+    // Verify ownership
+    const { data: existingAccount } = await supabase
+      .from('accounts')
+      .select('id')
+      .eq('id', params.id)
+      .eq('user_id', user.id)
+      .single();
+
+    if (!existingAccount) {
+      return NextResponse.json({ error: 'Account not found' }, { status: 404 });
+    }
+
+    const updates = await request.json();
 
     const { data, error } = await supabase
-      .from('categories')
-      .update({
-        name,
-        type,
-        color,
-        icon,
-      })
+      .from('accounts')
+      .update(updates)
       .eq('id', params.id)
       .eq('user_id', user.id)
       .select()
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json(
-      { message: 'Category updated successfully', category: data }
-    );
+    return NextResponse.json(data);
   } catch (error) {
     return handleApiError(error);
   }
 }
 
-// DELETE - Deletar categoria
 export async function DELETE(
-  req: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
     const { supabase, user } = await getAuthenticatedSupabase();
 
     const { error } = await supabase
-      .from('categories')
+      .from('accounts')
       .delete()
       .eq('id', params.id)
       .eq('user_id', user.id);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json(
-      { message: 'Category deleted successfully' }
-    );
+    return NextResponse.json({ success: true });
   } catch (error) {
     return handleApiError(error);
   }

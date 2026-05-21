@@ -1,19 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedSupabase, handleApiError } from '@/lib/supabase/server-api';
 
 // GET - Buscar todas as categorias do usuário
 export async function GET(req: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const { supabase, user } = await getAuthenticatedSupabase();
 
     const { data: categories, error } = await supabase
       .from('categories')
@@ -27,27 +18,14 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(categories);
   } catch (error) {
-    console.error('Get categories error:', error);
-    return NextResponse.json(
-      { error: 'An error occurred while fetching categories' },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
 
 // POST - Criar nova categoria
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const { supabase, user } = await getAuthenticatedSupabase();
 
     const { name, type, color, icon } = await req.json();
 
@@ -86,10 +64,6 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Create category error:', error);
-    return NextResponse.json(
-      { error: 'An error occurred while creating the category' },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
