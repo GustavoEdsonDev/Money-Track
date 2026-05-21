@@ -1,65 +1,182 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, TrendingUp, Wallet, BarChart3, Lock } from 'lucide-react';
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      {/* Navigation */}
+      <nav className="fixed top-0 w-full bg-white border-b backdrop-blur-sm z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <Link href="/" className="flex items-center gap-2">
+              <Wallet className="size-6 text-blue-600" />
+              <span className="text-xl font-bold text-blue-600">MoneyTrack</span>
+            </Link>
+            <div className="flex gap-4">
+              <Button variant="ghost" asChild>
+                <Link href="/login">Sign In</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/register">Get Started</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 mb-6">
+            Take Control of Your <span className="text-blue-600">Finances</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-xl text-gray-600 mb-8">
+            MoneyTrack helps you manage your money, track expenses, and achieve your financial goals
           </p>
+          <div className="flex gap-4 justify-center">
+            <Button size="lg" asChild>
+              <Link href="/register">
+                Get Started Free <ArrowRight className="size-4 ml-2" />
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" asChild>
+              <Link href="#features">Learn More</Link>
+            </Button>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Powerful Features</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Feature 1 */}
+            <div className="p-6 border rounded-lg hover:shadow-lg transition">
+              <div className="size-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <Wallet className="size-6 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Multi-Account Support</h3>
+              <p className="text-gray-600">
+                Manage multiple bank accounts and credit cards in one place
+              </p>
+            </div>
+
+            {/* Feature 2 */}
+            <div className="p-6 border rounded-lg hover:shadow-lg transition">
+              <div className="size-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                <BarChart3 className="size-6 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Smart Analytics</h3>
+              <p className="text-gray-600">
+                Get detailed insights into your spending patterns and trends
+              </p>
+            </div>
+
+            {/* Feature 3 */}
+            <div className="p-6 border rounded-lg hover:shadow-lg transition">
+              <div className="size-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                <TrendingUp className="size-6 text-purple-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Budget Planning</h3>
+              <p className="text-gray-600">
+                Set and track budgets to reach your financial goals faster
+              </p>
+            </div>
+
+            {/* Feature 4 */}
+            <div className="p-6 border rounded-lg hover:shadow-lg transition">
+              <div className="size-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                <Lock className="size-6 text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Bank-Level Security</h3>
+              <p className="text-gray-600">
+                Your financial data is encrypted and protected with industry-standard security
+              </p>
+            </div>
+
+            {/* Feature 5 */}
+            <div className="p-6 border rounded-lg hover:shadow-lg transition">
+              <div className="size-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                <TrendingUp className="size-6 text-orange-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Transaction History</h3>
+              <p className="text-gray-600">
+                Complete history and categorization of all your transactions
+              </p>
+            </div>
+
+            {/* Feature 6 */}
+            <div className="p-6 border rounded-lg hover:shadow-lg transition">
+              <div className="size-12 bg-cyan-100 rounded-lg flex items-center justify-center mb-4">
+                <Wallet className="size-6 text-cyan-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Goal Tracking</h3>
+              <p className="text-gray-600">
+                Set financial goals and monitor your progress towards them
+              </p>
+            </div>
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto bg-gradient-to-r from-blue-600 to-blue-400 rounded-2xl p-12 text-white text-center">
+          <h2 className="text-3xl font-bold mb-4">Ready to manage your finances?</h2>
+          <p className="text-lg mb-8 opacity-90">
+            Join thousands of users who are already taking control of their money
+          </p>
+          <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100" asChild>
+            <Link href="/register">Get Started Free</Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-300 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <h3 className="font-semibold text-white mb-4">MoneyTrack</h3>
+              <p className="text-sm">Taking control of your finances, one transaction at a time</p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Product</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="#" className="hover:text-white">Features</Link></li>
+                <li><Link href="#" className="hover:text-white">Pricing</Link></li>
+                <li><Link href="#" className="hover:text-white">Security</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Company</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="#" className="hover:text-white">About</Link></li>
+                <li><Link href="#" className="hover:text-white">Blog</Link></li>
+                <li><Link href="#" className="hover:text-white">Contact</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="#" className="hover:text-white">Privacy</Link></li>
+                <li><Link href="#" className="hover:text-white">Terms</Link></li>
+                <li><Link href="#" className="hover:text-white">Cookie Policy</Link></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 pt-8 flex justify-between items-center text-sm">
+            <p>&copy; 2024 MoneyTrack. All rights reserved.</p>
+            <div className="flex gap-4">
+              <Link href="#" className="hover:text-white">Twitter</Link>
+              <Link href="#" className="hover:text-white">Facebook</Link>
+              <Link href="#" className="hover:text-white">LinkedIn</Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
