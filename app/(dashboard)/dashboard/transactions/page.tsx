@@ -8,24 +8,40 @@ import { ArrowUpRight, ArrowDownLeft, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTransactions } from '@/hooks/use-transactions';
 import { AddTransactionForm } from '@/components/transactions/add-transaction-form';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function TransactionsPage() {
   const { transactions, loading, deleteTransaction, fetchTransactions } = useTransactions();
   const [showForm, setShowForm] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this transaction?')) return;
+ const handleDelete = async (id: string) => {
+  try {
+    setDeletingId(id);
+    await deleteTransaction(id);
+    console.log('Transação deletada');
+  } catch (error) {
+    console.error('Erro ao deletar:', error);
 
-    try {
-      setDeletingId(id);
-      await deleteTransaction(id);
-    } catch (error) {
+    if (error instanceof Error) {
+      alert(error.message);
+    } else {
       alert('Failed to delete transaction');
-    } finally {
-      setDeletingId(null);
     }
-  };
+  } finally {
+    setDeletingId(null);
+  }
+};
 
   const categoryBadgeColor = (category?: string) => {
     const colors: { [key: string]: string } = {
@@ -122,15 +138,38 @@ export default function TransactionsPage() {
                       {new Date(transaction.transaction_date).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(transaction.id)}
-                        disabled={deletingId === transaction.id}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
+<AlertDialog>
+  <AlertDialogTrigger asChild>
+    <Button
+      variant="ghost"
+      size="sm"
+      disabled={deletingId === transaction.id}
+      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+    >
+      <Trash2 className="size-4" />
+    </Button>
+  </AlertDialogTrigger>
+
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Delete transaction?</AlertDialogTitle>
+      <AlertDialogDescription>
+        This action cannot be undone. This will permanently delete this transaction.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+      <AlertDialogAction
+        onClick={() => handleDelete(transaction.id)}
+        className="bg-red-600 hover:bg-red-700"
+      >
+        Delete
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
                     </TableCell>
                   </TableRow>
                 ))}

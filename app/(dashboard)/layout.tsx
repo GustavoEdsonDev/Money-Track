@@ -1,3 +1,4 @@
+"use client"
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,6 +13,9 @@ import {
   Search,
 } from 'lucide-react';
 import { ReactNode } from 'react';
+import { useAuth } from '@/lib/auth-context';
+import { useRouter } from "next/navigation";
+import { useTransactions } from '@/hooks/use-transactions';
 
 interface MenuItem {
   href: string;
@@ -21,6 +25,14 @@ interface MenuItem {
 }
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
+
+
+  const {signOut, loading, user} = useAuth()
+  const router = useRouter()
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/login")
+  }
   const menuItems: MenuItem[] = [
     {
       href: '/dashboard',
@@ -88,11 +100,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           {/* User Profile */}
           <div className="flex items-center gap-3 mb-4">
             <div className="size-10 rounded-full bg-muted flex items-center justify-center">
-              <span className="font-semibold">G</span>
+              <span className="font-semibold">{user?.user_metadata.full_name.charAt(0).toUpperCase()}</span>
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-sm">Gustavo</p>
-              <p className="text-xs text-muted-foreground">gustavo.teste@email.com</p>
+              <p className="font-semibold text-sm">{user?.user_metadata.full_name}</p>
+              <p className="text-xs text-muted-foreground">{user?.email}</p>
             </div>
           </div>
           <div className="space-y-2">
@@ -100,8 +112,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <Settings className="size-4" />
               Settings
             </Button>
-            <Button variant="ghost" className="w-full justify-start gap-2 text-red-600" size="sm">
-              <LogOut className="size-4" />
+            <Button variant="ghost" className="w-full justify-start gap-2 text-red-600" size="sm" onClick={handleSignOut} disabled={loading}>
+              <LogOut className="size-4"  />
               Logout
             </Button>
           </div>
