@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuthenticatedSupabase, handleApiError } from '@/lib/supabase/server-api';
+import {
+  getAuthenticatedSupabase,
+  handleApiError,
+} from '@/lib/supabase/server-api';
 
 // GET - Buscar todas as transações do usuário
 export async function GET(req: NextRequest) {
   try {
     const { supabase, user } = await getAuthenticatedSupabase();
 
-    // Buscar transações do usuário
     const { data: transactions, error } = await supabase
       .from('transactions')
       .select('*')
@@ -28,7 +30,15 @@ export async function POST(req: NextRequest) {
   try {
     const { supabase, user } = await getAuthenticatedSupabase();
 
-    const { title, description, amount, type, category_id, account_id, transaction_date } = await req.json();
+    const {
+      title,
+      description,
+      amount,
+      type,
+      category_id,
+      account_id,
+      transaction_date,
+    } = await req.json();
 
     if (!title || !amount || !type || !transaction_date) {
       return NextResponse.json(
@@ -42,8 +52,8 @@ export async function POST(req: NextRequest) {
       .insert({
         user_id: user.id,
         title,
-        description,
-        amount: parseFloat(amount),
+        description: description || null,
+        amount: Number(amount),
         type,
         category_id: category_id || null,
         account_id: account_id || null,
@@ -57,7 +67,10 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      { message: 'Transaction created successfully', transaction: data },
+      {
+        message: 'Transaction created successfully',
+        transaction: data,
+      },
       { status: 201 }
     );
   } catch (error) {

@@ -4,63 +4,45 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowUpRight, ArrowDownLeft, TrendingUp, PlusCircle } from 'lucide-react';
+import { useTransactions } from '@/hooks/use-transactions';
+import { useCategories } from '@/hooks/use-categories';
+import { useAccounts } from '@/hooks/use-accounts';
+import { useBudgets } from '@/hooks/use-budgets';
+
+
 
 export default function DashboardPage() {
+  const { transactions, loading: transactionsLoading } = useTransactions();
+  const { categories, loading, deleteCategory, fetchCategories } = useCategories();
+  const { accounts,  deleteAccount, fetchAccounts } = useAccounts();
+  const { budgets } = useBudgets()
+
+  
+  const totalIncome = transactions
+  .filter((transaction) => transaction.type === 'income')
+  .reduce((total, transaction) => total + transaction.amount, 0);
+
+  const totalExpense = transactions
+  .filter((transaction) => transaction.type === 'expense')
+  .reduce((total, transaction) => total + transaction.amount, 0);
+
+  const balance = totalIncome - totalExpense;
+
+   const formatCurrency = (value: number) => {
+    return value.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    });
+  };
+
   // Dados simulados
-  const accounts = [
-    { id: '1', name: 'Conta Corrente', balance: 5250.00, type: 'checking' },
-    { id: '2', name: 'Poupança', balance: 12500.00, type: 'savings' },
-    { id: '3', name: 'Cartão de Crédito', balance: -1250.00, type: 'credit_card' },
-  ];
+  // const accounts = [
+  //   { id: '1', name: 'Conta Corrente', balance: 5250.00, type: 'checking' },
+  //   { id: '2', name: 'Poupança', balance: 12500.00, type: 'savings' },
+  //   { id: '3', name: 'Cartão de Crédito', balance: -1250.00, type: 'credit_card' },
+  // ];
 
-  const transactions = [
-    {
-      id: '1',
-      description: 'Supermercado',
-      amount: 250.50,
-      type: 'expense',
-      category: 'Alimentação',
-      date: new Date('2024-05-21'),
-      categoryColor: '#FF6B6B',
-    },
-    {
-      id: '2',
-      description: 'Salário',
-      amount: 5000.00,
-      type: 'income',
-      category: 'Receita',
-      date: new Date('2024-05-20'),
-      categoryColor: '#51CF66',
-    },
-    {
-      id: '3',
-      description: 'Netflix',
-      amount: 49.90,
-      type: 'expense',
-      category: 'Entretenimento',
-      date: new Date('2024-05-19'),
-      categoryColor: '#A78BFA',
-    },
-    {
-      id: '4',
-      description: 'Uber',
-      amount: 35.00,
-      type: 'expense',
-      category: 'Transporte',
-      date: new Date('2024-05-18'),
-      categoryColor: '#FFD93D',
-    },
-    {
-      id: '5',
-      description: 'Freelance',
-      amount: 1200.00,
-      type: 'income',
-      category: 'Receita Extra',
-      date: new Date('2024-05-17'),
-      categoryColor: '#51CF66',
-    },
-  ];
-
+  
   const categorySpending = [
     { name: 'Alimentação', amount: 1250, percentage: 35 },
     { name: 'Transporte', amount: 450, percentage: 13 },
@@ -69,13 +51,7 @@ export default function DashboardPage() {
     { name: 'Outros', amount: 400, percentage: 14 },
   ];
 
-  const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
-  const totalIncome = transactions
-    .filter((t) => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
-  const totalExpense = transactions
-    .filter((t) => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
+
 
   return (
     <div className="space-y-8 p-6">
@@ -99,7 +75,7 @@ export default function DashboardPage() {
             <TrendingUp className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">R$ {totalBalance.toLocaleString('pt-BR')}</div>
+            <div className="text-2xl font-bold">R$ {formatCurrency(balance)}</div>
             <p className="text-xs text-muted-foreground mt-1">
               +2.5% em relação ao mês passado
             </p>
@@ -152,7 +128,7 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-4">
                       <div
                         className="size-10 rounded-full flex items-center justify-center text-white"
-                        style={{ backgroundColor: transaction.categoryColor }}
+                       
                       >
                         {transaction.type === 'income' ? (
                           <ArrowDownLeft className="size-5" />
@@ -163,7 +139,7 @@ export default function DashboardPage() {
                       <div>
                         <p className="font-medium">{transaction.description}</p>
                         <p className="text-sm text-muted-foreground">
-                          {transaction.category} • {transaction.date.toLocaleDateString('pt-BR')}
+                          
                         </p>
                       </div>
                     </div>
@@ -194,17 +170,13 @@ export default function DashboardPage() {
                   <div>
                     <p className="font-medium text-sm">{account.name}</p>
                     <Badge variant="outline" className="mt-1">
-                      {account.type === 'checking'
-                        ? 'Corrente'
-                        : account.type === 'savings'
-                          ? 'Poupança'
-                          : 'Crédito'}
+                    {account.type}
                     </Badge>
                   </div>
                   <p
-                    className={`font-semibold ${account.balance >= 0 ? 'text-green-600' : 'text-red-600'}`}
+                    className={`font-semibold ${account.initial_balance >= 0 ? 'text-green-600' : 'text-red-600'}`}
                   >
-                    R$ {account.balance.toFixed(2)}
+                    R$ {account.initial_balance.toFixed(2)}
                   </p>
                 </div>
               ))}
@@ -217,16 +189,16 @@ export default function DashboardPage() {
               <CardTitle className="text-lg">Gastos por Categoria</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {categorySpending.map((category) => (
-                <div key={category.name} className="space-y-1">
+              {categories.map((category) => (
+                <div key={category.id} className="space-y-1">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium">{category.name}</p>
-                    <p className="text-sm text-muted-foreground">R$ {category.amount}</p>
+                    <p className="text-sm text-muted-foreground">R$ {category.type}</p>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <div
                       className="bg-primary h-2 rounded-full"
-                      style={{ width: `${category.percentage}%` }}
+                      style={{ width: `${category.color}%` }}
                     />
                   </div>
                 </div>

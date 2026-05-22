@@ -1,22 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuthenticatedSupabase, handleApiError, NotFoundError } from '@/lib/supabase/server-api';
+import {
+  getAuthenticatedSupabase,
+  handleApiError,
+  NotFoundError,
+} from '@/lib/supabase/server-api';
 
 // GET - Buscar transação por ID
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { supabase, user } = await getAuthenticatedSupabase();
+
+    console.log('GET transaction id:', id);
+    console.log('Logged user id:', user.id);
 
     const { data: transaction, error } = await supabase
       .from('transactions')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
-    if (error || !transaction) {
+    if (error) {
+      console.error('GET transaction error:', error);
+
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
+    }
+
+    if (!transaction) {
       throw new NotFoundError('Transaction not found');
     }
 
@@ -29,36 +46,55 @@ export async function GET(
 // PUT - Atualizar transação
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { supabase, user } = await getAuthenticatedSupabase();
 
-    const { title, description, amount, type, category_id, account_id, transaction_date } = await req.json();
+    const {
+      title,
+      description,
+      amount,
+      type,
+      category_id,
+      account_id,
+      transaction_date,
+    } = await req.json();
 
     const { data, error } = await supabase
       .from('transactions')
       .update({
         title,
-        description,
-        amount: amount ? parseFloat(amount) : undefined,
+        description: description || null,
+        amount: amount !== undefined ? Number(amount) : undefined,
         type,
-        category_id,
-        account_id,
+        category_id: category_id || null,
+        account_id: account_id || null,
         transaction_date,
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error('PUT transaction error:', error);
+
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(
-      { message: 'Transaction updated successfully', transaction: data }
-    );
+    if (!data) {
+      throw new NotFoundError('Transaction not found');
+    }
+
+    return NextResponse.json({
+      message: 'Transaction updated successfully',
+      transaction: data,
+    });
   } catch (error) {
     return handleApiError(error);
   }
@@ -66,25 +102,34 @@ export async function PUT(
 
 // DELETE - Deletar transação
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { supabase, user } = await getAuthenticatedSupabase();
+
+    console.log('DELETE transaction id:', id);
+    console.log('Logged user id:', user.id);
 
     const { error } = await supabase
       .from('transactions')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error('DELETE transaction error:', error);
+
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(
-      { message: 'Transaction deleted successfully' }
-    );
+    return NextResponse.json({
+      message: 'Transaction deleted successfully',
+    });
   } catch (error) {
     return handleApiError(error);
   }
