@@ -26,7 +26,6 @@ interface MenuItem {
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
 
-
   const {signOut, loading, user} = useAuth()
   const router = useRouter()
   const handleSignOut = async () => {
@@ -88,15 +87,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             </Link>
           ))}
         </nav>
-
-        {/* Net Worth - Bottom Card */}
         <div className="p-4 border-t">
-          <div className="p-4 bg-muted rounded-lg border mb-4">
-            <p className="text-xs text-muted-foreground mb-1">Net Worth</p>
-            <p className="text-xl font-bold text-green-600">$14,250.75</p>
-            <p className="text-xs text-green-600 mt-1">↑ 3.2% vs last month</p>
-          </div>
-
           {/* User Profile */}
           <div className="flex items-center gap-3 mb-4">
             <div className="size-10 rounded-full bg-muted flex items-center justify-center">
@@ -135,11 +126,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon">
-              <Bell className="size-5" />
-            </Button>
             <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm font-semibold cursor-pointer">
-              G
+             {user?.user_metadata.full_name.charAt(0).toUpperCase()}
             </div>
           </div>
         </header>
