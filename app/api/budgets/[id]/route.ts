@@ -69,25 +69,34 @@ export async function PUT(
 
 // DELETE - Deletar orçamento
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { supabase, user } = await getAuthenticatedSupabase();
+
+    console.log('DELETE budget id:', id);
+    console.log('Logged user id:', user.id);
 
     const { error } = await supabase
       .from('budgets')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error('DELETE budget error:', error);
+
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(
-      { message: 'Budget deleted successfully' }
-    );
+    return NextResponse.json({
+      message: 'Budgets deleted successfully',
+    });
   } catch (error) {
     return handleApiError(error);
   }

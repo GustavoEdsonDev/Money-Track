@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getAuthenticatedSupabase, handleApiError, NotFoundError } from '@/lib/supabase/server-api';
 
 export async function GET(
@@ -65,23 +66,34 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { supabase, user } = await getAuthenticatedSupabase();
+
+    console.log('DELETE account id:', id);
+    console.log('Logged user id:', user.id);
 
     const { error } = await supabase
       .from('accounts')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error('DELETE account error:', error);
+
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      message: 'Account deleted successfully',
+    });
   } catch (error) {
     return handleApiError(error);
   }
