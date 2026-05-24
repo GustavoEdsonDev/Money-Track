@@ -8,6 +8,17 @@ import { useState } from 'react';
 import { useBudgets } from '@/hooks/use-budgets';
 import { useCategories } from '@/hooks/use-categories';
 import { AddBudgetForm } from '@/components/budgets/add-budget-form';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function BudgetsPage() {
   const { budgets, loading, deleteBudget, fetchBudgets } = useBudgets();
@@ -16,8 +27,6 @@ export default function BudgetsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this budget?')) return;
-
     try {
       setDeletingId(id);
       await deleteBudget(id);
@@ -107,15 +116,40 @@ export default function BudgetsPage() {
                             </Badge>
                           </div>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
+                    <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        disabled={deletingId === budget.id}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Budget?</AlertDialogTitle>
+
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete this Budget.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                        <AlertDialogAction
                           onClick={() => handleDelete(budget.id)}
-                          disabled={deletingId === budget.id}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          className="bg-red-600 hover:bg-red-700"
                         >
-                          <Trash2 className="size-4" />
-                        </Button>
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-3">

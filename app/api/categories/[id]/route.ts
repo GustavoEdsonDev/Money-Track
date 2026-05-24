@@ -33,9 +33,7 @@ export async function PUT(
 ) {
   try {
     const { supabase, user } = await getAuthenticatedSupabase();
-
     const { name, type, color, icon } = await req.json();
-
     const { data, error } = await supabase
       .from('categories')
       .update({
@@ -63,25 +61,34 @@ export async function PUT(
 
 // DELETE - Deletar categoria
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { supabase, user } = await getAuthenticatedSupabase();
+
+    console.log('DELETE category id:', id);
+    console.log('Logged user id:', user.id);
 
     const { error } = await supabase
       .from('categories')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error('DELETE category error:', error);
+
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(
-      { message: 'Category deleted successfully' }
-    );
+    return NextResponse.json({
+      message: 'Category deleted successfully',
+    });
   } catch (error) {
     return handleApiError(error);
   }

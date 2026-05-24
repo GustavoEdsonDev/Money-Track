@@ -7,6 +7,17 @@ import { Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useAccounts } from '@/hooks/use-accounts';
 import { AddAccountForm } from '@/components/accounts/add-account-form';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const accountIcons: Record<string, string> = {
   cash: '💵',
@@ -28,8 +39,6 @@ export default function AccountsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this account?')) return;
-
     try {
       setDeletingId(id);
       await deleteAccount(id);
@@ -82,15 +91,40 @@ export default function AccountsPage() {
                     </Badge>
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleDelete(account.id)}
-                  disabled={deletingId === account.id}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash2 className="size-4" />
-                </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        disabled={deletingId === account.id}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Account?</AlertDialogTitle>
+
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete this Account.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                        <AlertDialogAction
+                          onClick={() => handleDelete(account.id)}
+                          className="bg-red-600 hover:bg-red-700"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
