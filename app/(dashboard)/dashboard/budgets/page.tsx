@@ -9,6 +9,7 @@ import { useBudgets, type Budget } from '@/hooks/use-budgets';
 import { useCategories } from '@/hooks/use-categories';
 import { AddBudgetForm } from '@/components/budgets/add-budget-form';
 import { EditBudgetForm } from '@/components/budgets/edit-budget-form';
+import { renderCategoryIcon } from '@/lib/category-icons';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,7 +34,7 @@ export default function BudgetsPage() {
       setDeletingId(id);
       await deleteBudget(id);
     } catch (error) {
-      alert('Failed to delete budget');
+      alert('Falha ao excluir orçamento');
     } finally {
       setDeletingId(null);
     }
@@ -49,7 +50,7 @@ export default function BudgetsPage() {
       if (error instanceof Error) {
         alert(error.message);
       } else {
-        alert('Failed to update budget');
+        alert('Falha ao atualizar orçamento');
       }
     } finally {
       setUpdatingId(null);
@@ -57,7 +58,7 @@ export default function BudgetsPage() {
   };
 
   const getCategoryName = (categoryId: string) => {
-    return categories.find((c) => c.id === categoryId)?.name || 'Unknown';
+    return categories.find((c) => c.id === categoryId)?.name || 'Desconhecido';
   };
 
   const getCategoryIcon = (categoryId: string) => {
@@ -65,7 +66,7 @@ export default function BudgetsPage() {
   };
 
   const getMonthName = (month: number) => {
-    return new Date(2024, month - 1).toLocaleString('default', {
+    return new Date(2024, month - 1).toLocaleString('pt-BR', {
       month: 'long',
     });
   };
@@ -87,12 +88,12 @@ export default function BudgetsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Budgets</h1>
-          <p className="text-muted-foreground mt-2">Set and track spending limits for each category</p>
+          <h1 className="text-3xl font-bold tracking-tight">Orçamentos</h1>
+          <p className="text-muted-foreground mt-2">Defina e acompanhe limites de gastos para cada categoria</p>
         </div>
         <Button className="gap-2" onClick={() => setShowForm(!showForm)}>
           <Plus className="size-4" />
-          {showForm ? 'Cancel' : 'New Budget'}
+          {showForm ? 'Cancelar' : 'Novo Orçamento'}
         </Button>
       </div>
 
@@ -125,13 +126,13 @@ export default function BudgetsPage() {
                     <Card key={budget.id} className="hover:shadow-lg transition-shadow">
                       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
                         <div className="flex items-center gap-3">
-                          <div className="text-2xl">
-                            {getCategoryIcon(budget.category_id)}
-                          </div>
+                        <div className="size-12 rounded-lg bg-muted flex items-center justify-center">
+  {renderCategoryIcon(getCategoryIcon(budget.category_id), 'size-6')}
+</div>
                           <div>
                             <h3 className="font-semibold">{getCategoryName(budget.category_id)}</h3>
                             <Badge variant="outline" className="mt-1 text-xs">
-                              Budget
+                              Orçamento
                             </Badge>
                           </div>
                         </div>
@@ -142,52 +143,52 @@ export default function BudgetsPage() {
                             onUpdate={handleUpdate}
                           />
                           <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        disabled={deletingId === budget.id}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
-                    </AlertDialogTrigger>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                disabled={deletingId === budget.id}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="size-4" />
+                              </Button>
+                            </AlertDialogTrigger>
 
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Budget?</AlertDialogTitle>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Excluir orçamento?</AlertDialogTitle>
 
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete this Budget.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
+                                <AlertDialogDescription>
+                                  Esta ação não pode ser desfeita. Isso irá excluir
+                                  permanentemente este orçamento.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
 
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
 
-                        <AlertDialogAction
-                          onClick={() => handleDelete(budget.id)}
-                          className="bg-red-600 hover:bg-red-700"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                                <AlertDialogAction
+                                  onClick={() => handleDelete(budget.id)}
+                                  className="bg-red-600 hover:bg-red-700"
+                                >
+                                  Excluir
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-muted-foreground">Limit</span>
+                            <span className="text-sm text-muted-foreground">Limite</span>
                             <span className="text-lg font-semibold">
-                              ${budget.amount_limit.toFixed(2)}
+                              R$ {budget.amount_limit.toFixed(2)}
                             </span>
                           </div>
                           <div className="pt-2 border-t">
                             <p className="text-xs text-muted-foreground">
-                              Created {new Date(budget.created_at).toLocaleDateString()}
+                              Criado em {new Date(budget.created_at).toLocaleDateString('pt-BR')}
                             </p>
                           </div>
                         </div>
@@ -205,7 +206,7 @@ export default function BudgetsPage() {
       {budgets.length === 0 && !loading && (
         <div className="text-center py-12 rounded-lg border-2 border-dashed">
           <AlertCircle className="size-12 mx-auto text-muted-foreground mb-3" />
-          <p className="text-muted-foreground">No budgets yet. Create one to set spending limits!</p>
+          <p className="text-muted-foreground">Nenhum orçamento ainda. Crie um para definir limites de gastos!</p>
         </div>
       )}
     </div>

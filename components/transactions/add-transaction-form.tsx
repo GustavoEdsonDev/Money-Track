@@ -45,7 +45,7 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
     setError('');
 
     if (!title || !amount) {
-      setError('Title and amount are required');
+      setError('Título e valor são obrigatórios');
       return;
     }
 
@@ -66,7 +66,7 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Failed to create transaction');
+        throw new Error(data.error || 'Falha ao criar transação');
       }
 
       // Reset form
@@ -79,7 +79,7 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
 
       onSuccess?.();
     } catch (err: any) {
-      setError(err.message || 'An error occurred');
+      setError(err.message || 'Ocorreu um erro');
     } finally {
       setLoading(false);
     }
@@ -88,8 +88,8 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
   return (
     <Card>
       <CardHeader>
-        <CardTitle>New Transaction</CardTitle>
-        <CardDescription>Add a new income or expense</CardDescription>
+        <CardTitle>Nova Transação</CardTitle>
+        <CardDescription>Adicione uma nova transação</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -102,10 +102,10 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
 
           {/* Title */}
           <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">Título</Label>
             <Input
               id="title"
-              placeholder="e.g., Grocery shopping"
+              placeholder="Ex.: Compras no mercado"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               disabled={loading}
@@ -115,10 +115,10 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">Description (Optional)</Label>
+            <Label htmlFor="description">Descrição (opcional)</Label>
             <Input
               id="description"
-              placeholder="Add a note..."
+              placeholder="Adicione uma observação..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               disabled={loading}
@@ -127,12 +127,12 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
 
           {/* Amount */}
           <div className="space-y-2">
-            <Label htmlFor="amount">Amount</Label>
+            <Label htmlFor="amount">Valor</Label>
             <Input
               id="amount"
               type="number"
               step="0.01"
-              placeholder="0.00"
+              placeholder="0,00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               disabled={loading}
@@ -142,7 +142,7 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
 
           {/* Type */}
           <div className="space-y-2">
-            <Label htmlFor="type">Type</Label>
+            <Label htmlFor="type">Tipo</Label>
             <Select value={type} onValueChange={(value) => setType(value as 'income' | 'expense')}>
               <SelectTrigger id="type" disabled={loading}>
                 <SelectValue />
@@ -151,13 +151,13 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
                 <SelectItem value="expense">
                   <div className="flex items-center gap-2">
                     <ArrowDownLeft className="size-4" />
-                    Expense
+                    Despesa
                   </div>
                 </SelectItem>
                 <SelectItem value="income">
                   <div className="flex items-center gap-2">
                     <ArrowUpRight className="size-4" />
-                    Income
+                    Receita
                   </div>
                 </SelectItem>
               </SelectContent>
@@ -166,10 +166,10 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
 
           {/* Category */}
           <div className="space-y-2">
-            <Label htmlFor="category">Category (Optional)</Label>
+            <Label htmlFor="category">Categoria (opcional)</Label>
             <Select value={categoryId} onValueChange={setCategoryId}>
               <SelectTrigger id="category" disabled={loading || filteredCategories.length === 0}>
-                <SelectValue placeholder="Select a category" />
+                <SelectValue placeholder="Selecione uma categoria" />
               </SelectTrigger>
               <SelectContent>
                 {filteredCategories.map((category) => (
@@ -184,14 +184,14 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
             </Select>
             {filteredCategories.length === 0 && (
               <p className="text-xs text-muted-foreground">
-                No categories available for this type
+                Nenhuma categoria disponível para este tipo
               </p>
             )}
           </div>
 
           {/* Date */}
           <div className="space-y-2">
-            <Label htmlFor="date">Date</Label>
+            <Label htmlFor="date">Data</Label>
             <Input
               id="date"
               type="date"
@@ -205,16 +205,16 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
           {/* Buttons */}
           <div className="flex gap-2 justify-end">
             <Button type="button" variant="outline" onClick={onCancel} disabled={loading}>
-              Cancel
+              Cancelar
             </Button>
             <Button type="submit" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="size-4 mr-2 animate-spin" />
-                  Creating...
+                  Criando...
                 </>
               ) : (
-                'Add Transaction'
+                'Adicionar Transação'
               )}
             </Button>
           </div>

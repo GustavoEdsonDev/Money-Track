@@ -26,33 +26,46 @@ export default function SettingsPage() {
   }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage('');
-    setError('');
-    setUpdating(true);
+  e.preventDefault();
+  setMessage('');
+  setError('');
+  setUpdating(true);
 
-    try {
-      await updateProfile({
-        full_name: fullName,
-        email: email,
-      });
-      setMessage('Perfil atualizado com sucesso!');
-      setTimeout(() => setMessage(''), 3000);
-    } catch (err: any) {
-      console.error('Update error:', err);
-      let errorMessage = 'Erro ao atualizar perfil';
-      
-      if (err.message?.includes('already registered')) {
-        errorMessage = 'Este email já está registrado.';
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      
-      setError(errorMessage);
-    } finally {
-      setUpdating(false);
+  try {
+    const profileData: {
+      full_name: string;
+      email?: string;
+    } = {
+      full_name: fullName,
+    };
+
+    if (email !== user?.email) {
+      profileData.email = email;
     }
-  };
+
+    await updateProfile(profileData);
+
+    setMessage('Perfil atualizado com sucesso!');
+    setTimeout(() => setMessage(''), 3000);
+  } catch (err: any) {
+    console.error('Erro ao atualizar perfil:', err);
+
+    let errorMessage = 'Erro ao atualizar perfil';
+
+    if (
+      err.message?.includes('already registered') ||
+      err.message?.includes('already been registered')
+    ) {
+      errorMessage = 'Este e-mail já está registrado.';
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+
+    setError(errorMessage);
+  } finally {
+    setUpdating(false);
+  }
+};
 
   const handleSignOut = async () => {
     await signOut();
@@ -77,6 +90,7 @@ export default function SettingsPage() {
               Atualize seus dados pessoais
             </CardDescription>
           </CardHeader>
+
           <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               {/* Success Message */}
@@ -114,7 +128,7 @@ export default function SettingsPage() {
               {/* Email */}
               <div className="space-y-1.5 sm:space-y-2">
                 <Label htmlFor="email" className="text-xs sm:text-sm">
-                  Email
+                  E-mail
                 </Label>
                 <Input
                   id="email"
@@ -126,7 +140,7 @@ export default function SettingsPage() {
                   className="text-sm sm:text-base"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Alterar seu email enviará um email de confirmação
+                  Alterar seu e-mail enviará uma mensagem de confirmação
                 </p>
               </div>
 
@@ -153,11 +167,13 @@ export default function SettingsPage() {
               Gerencie sua sessão
             </CardDescription>
           </CardHeader>
+
           <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
             <div className="space-y-4">
               <p className="text-xs sm:text-sm text-muted-foreground">
                 Desconecte de todas as suas sessões clicando no botão abaixo.
               </p>
+
               <Button
                 onClick={handleSignOut}
                 variant="destructive"
@@ -178,6 +194,7 @@ export default function SettingsPage() {
               Detalhes da sua conta
             </CardDescription>
           </CardHeader>
+
           <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
             <div className="space-y-4">
               <div className="space-y-1">
@@ -186,6 +203,7 @@ export default function SettingsPage() {
                   {user?.id}
                 </p>
               </div>
+
               <div className="space-y-1">
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground">Data de Criação</p>
                 <p className="text-xs sm:text-sm">
@@ -195,7 +213,7 @@ export default function SettingsPage() {
                         month: 'long',
                         day: 'numeric',
                       })
-                    : 'N/A'}
+                    : 'Não disponível'}
                 </p>
               </div>
             </div>

@@ -28,7 +28,7 @@ export default function LoginPage() {
         setRememberMe(true);
       }
     } catch (error) {
-      console.error('Error restoring session:', error);
+      console.error('Erro ao restaurar sessão:', error);
     }
   }, []);
 
@@ -55,14 +55,14 @@ export default function LoginPage() {
       router.push('/dashboard');
     } catch (err: any) {
       // Melhorar mensagem de erro
-      console.error('Login error:', err);
+      console.error('Erro de login:', err);
       
-      let errorMessage = 'Failed to sign in';
+      let errorMessage = 'Falha ao entrar';
       
       if (err.message?.includes('Invalid login credentials')) {
-        errorMessage = 'Email ou senha incorretos. Verifique seus dados.';
+        errorMessage = 'E-mail ou senha incorretos. Verifique seus dados.';
       } else if (err.message?.includes('Email not confirmed')) {
-        errorMessage = 'Confirme seu email antes de fazer login. Verifique seu inbox.';
+        errorMessage = 'Confirme seu e-mail antes de fazer login. Verifique sua caixa de entrada.';
       } else if (err.message?.includes('User not found')) {
         errorMessage = 'Usuário não encontrado. Crie uma conta primeiro.';
       } else if (err.message) {
@@ -87,8 +87,8 @@ export default function LoginPage() {
         {/* Login Card */}
         <Card className="shadow-lg border-0 sm:border">
           <CardHeader className="text-center px-4 sm:px-6 py-4 sm:py-6">
-            <CardTitle className="text-xl sm:text-2xl md:text-3xl">Welcome Back</CardTitle>
-            <CardDescription className="text-xs sm:text-sm md:text-base">Sign in to your account to continue</CardDescription>
+            <CardTitle className="text-xl sm:text-2xl md:text-3xl">Bem-vindo de volta</CardTitle>
+            <CardDescription className="text-xs sm:text-sm md:text-base">Entre na sua conta para continuar</CardDescription>
           </CardHeader>
           <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
             <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
@@ -102,11 +102,11 @@ export default function LoginPage() {
 
               {/* Email */}
               <div className="space-y-1.5 sm:space-y-2">
-                <Label htmlFor="email" className="text-xs sm:text-sm">Email</Label>
+                <Label htmlFor="email" className="text-xs sm:text-sm">E-mail</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="voce@exemplo.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -117,7 +117,7 @@ export default function LoginPage() {
 
               {/* Password */}
               <div className="space-y-1.5 sm:space-y-2">
-                <Label htmlFor="password" className="text-xs sm:text-sm">Password</Label>
+                <Label htmlFor="password" className="text-xs sm:text-sm">Senha</Label>
                 <Input
                   id="password"
                   type="password"
@@ -140,7 +140,7 @@ export default function LoginPage() {
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
                   />
-                  <span>Remember me</span>
+                  <span>Lembrar de mim</span>
                 </label>
               </div>
 
@@ -149,10 +149,10 @@ export default function LoginPage() {
                 {loading ? (
                   <>
                     <Loader2 className="size-3 sm:size-4 mr-2 animate-spin" />
-                    <span className="text-xs sm:text-sm">Signing in...</span>
+                    <span className="text-xs sm:text-sm">Entrando...</span>
                   </>
                 ) : (
-                  'Sign In'
+                  'Entrar'
                 )}
               </Button>
 
@@ -162,21 +162,16 @@ export default function LoginPage() {
                   <div className="w-full border-t"></div>
                 </div>
                 <div className="relative flex justify-center text-xs sm:text-sm">
-                  <span className="px-2 bg-background text-muted-foreground">or</span>
+                  <span className="px-2 bg-background text-muted-foreground">ou</span>
                 </div>
               </div>
-
-              {/* Social Login */}
-              <Button type="button" variant="outline" className="w-full text-sm sm:text-base py-2 sm:py-2.5" disabled={loading}>
-                Sign in with Google
-              </Button>
             </form>
 
             {/* Sign Up Link */}
             <p className="text-center text-xs sm:text-sm text-muted-foreground mt-4 sm:mt-6">
-              Don't have an account?{' '}
+              Não tem uma conta?{' '}
               <Link href="/register" className="text-blue-600 hover:underline font-medium">
-                Sign up
+                Cadastre-se
               </Link>
             </p>
           </CardContent>

@@ -58,7 +58,7 @@ export default function DashboardPage() {
         <Link href="/dashboard/transactions" className="cursor-pointer w-full sm:w-auto">
         <Button className="w-full sm:w-auto">
           <Plus className="size-3 sm:size-4" /> 
-          <span className="text-xs sm:text-sm">New Transaction</span>
+          <span className="text-xs sm:text-sm">Nova Transação</span>
         </Button> 
         </Link>
         

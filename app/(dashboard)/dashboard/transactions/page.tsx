@@ -14,7 +14,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-
 import {
   Table,
   TableBody,
@@ -66,7 +65,7 @@ export default function TransactionsPage() {
       if (error instanceof Error) {
         alert(error.message);
       } else {
-        alert("Failed to delete transaction");
+        alert("Falha ao excluir transação");
       }
     } finally {
       setDeletingId(null);
@@ -86,7 +85,7 @@ export default function TransactionsPage() {
       if (error instanceof Error) {
         alert(error.message);
       } else {
-        alert("Failed to update transaction");
+        alert("Falha ao atualizar transação");
       }
     } finally {
       setUpdatingId(null);
@@ -103,16 +102,16 @@ export default function TransactionsPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Transactions</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Transações</h1>
 
           <p className="text-muted-foreground mt-2">
-            Manage and track all your transactions
+            Gerencie e acompanhe todas as suas transações
           </p>
         </div>
 
         <Button className="gap-2" onClick={() => setShowForm(!showForm)}>
           <Plus className="size-4" />
-          {showForm ? "Cancel" : "New Transaction"}
+          {showForm ? "Cancelar" : "Nova Transação"}
         </Button>
       </div>
 
@@ -128,12 +127,12 @@ export default function TransactionsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Transactions</CardTitle>
+          <CardTitle>Todas as Transações</CardTitle>
 
           <CardDescription>
             {loading
-              ? "Loading..."
-              : `You have ${transactions.length} transactions`}
+              ? "Carregando..."
+              : `Você tem ${transactions.length} transações`}
           </CardDescription>
         </CardHeader>
 
@@ -141,18 +140,18 @@ export default function TransactionsPage() {
           {transactions.length === 0 && !loading ? (
             <div className="text-center py-8">
               <p className="text-muted-foreground">
-                No transactions yet. Create one to get started!
+                Nenhuma transação ainda. Crie uma para começar!
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Título</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Valor</TableHead>
+                  <TableHead>Data</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -176,7 +175,7 @@ export default function TransactionsPage() {
                         variant="outline"
                         className={typeBadgeColor(transaction.type)}
                       >
-                        {transaction.type === "income" ? "Income" : "Expense"}
+                        {transaction.type === "income" ? "Receita" : "Despesa"}
                       </Badge>
                     </TableCell>
 
@@ -188,7 +187,7 @@ export default function TransactionsPage() {
                             : "text-red-600"
                         }
                       >
-                        {transaction.type === "income" ? "+" : "-"}$
+                        {transaction.type === "income" ? "+" : "-"}R${" "}
                         {transaction.amount.toFixed(2)}
                       </span>
                     </TableCell>
@@ -196,7 +195,7 @@ export default function TransactionsPage() {
                     <TableCell>
                       {new Date(
                         transaction.transaction_date,
-                      ).toLocaleDateString()}
+                      ).toLocaleDateString("pt-BR")}
                     </TableCell>
 
                     <TableCell>
@@ -222,23 +221,23 @@ export default function TransactionsPage() {
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>
-                                Delete transaction?
+                                Excluir transação?
                               </AlertDialogTitle>
 
                               <AlertDialogDescription>
-                                This action cannot be undone. This will
-                                permanently delete this transaction.
+                                Esta ação não pode ser desfeita. Isso irá
+                                excluir permanentemente esta transação.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
 
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
 
                               <AlertDialogAction
                                 onClick={() => handleDelete(transaction.id)}
                                 className="bg-red-600 hover:bg-red-700"
                               >
-                                Delete
+                                Excluir
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>

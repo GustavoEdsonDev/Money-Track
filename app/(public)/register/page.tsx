@@ -27,23 +27,23 @@ export default function RegisterPage() {
     setSuccess('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError('As senhas não coincidem');
       return;
     }
 
     if (!agreeTerms) {
-      setError('You must agree to the terms and conditions');
+      setError('Você precisa aceitar os termos e condições');
       return;
     }
 
     try {
       await signUp(email, password, name);
-      setSuccess('Account created! Check your email to confirm.');
+      setSuccess('Conta criada! Verifique seu e-mail para confirmar.');
       setTimeout(() => {
         router.push('/login');
       }, 2000);
     } catch (err: any) {
-      setError(err.message || 'Failed to create account');
+      setError(err.message || 'Falha ao criar conta');
     }
   };
 
@@ -61,8 +61,8 @@ export default function RegisterPage() {
         {/* Register Card */}
         <Card className="shadow-lg">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Create Account</CardTitle>
-            <CardDescription>Join MoneyTrack and start managing your finances</CardDescription>
+            <CardTitle className="text-2xl">Criar Conta</CardTitle>
+            <CardDescription>Entre no MoneyTrack e comece a gerenciar suas finanças</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -84,11 +84,11 @@ export default function RegisterPage() {
 
               {/* Full Name */}
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">Nome Completo</Label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="João Silva"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -98,11 +98,11 @@ export default function RegisterPage() {
 
               {/* Email */}
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">E-mail</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="voce@exemplo.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -112,7 +112,7 @@ export default function RegisterPage() {
 
               {/* Password */}
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Senha</Label>
                 <Input
                   id="password"
                   type="password"
@@ -126,7 +126,7 @@ export default function RegisterPage() {
 
               {/* Confirm Password */}
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -138,38 +138,16 @@ export default function RegisterPage() {
                 />
               </div>
 
-              {/* Terms & Conditions */}
-              <div className="flex items-start gap-2">
-                <input
-                  type="checkbox"
-                  id="terms"
-                  checked={agreeTerms}
-                  onChange={(e) => setAgreeTerms(e.target.checked)}
-                  required
-                  disabled={loading}
-                  className="mt-1"
-                />
-                <label htmlFor="terms" className="text-sm text-muted-foreground cursor-pointer">
-                  I agree to the{' '}
-                  <Link href="#" className="text-blue-600 hover:underline">
-                    Terms of Service
-                  </Link>{' '}
-                  and{' '}
-                  <Link href="#" className="text-blue-600 hover:underline">
-                    Privacy Policy
-                  </Link>
-                </label>
-              </div>
 
               {/* Register Button */}
               <Button type="submit" className="w-full" disabled={loading || !agreeTerms}>
                 {loading ? (
                   <>
                     <Loader2 className="size-4 mr-2 animate-spin" />
-                    Creating Account...
+                    Criando conta...
                   </>
                 ) : (
-                  'Create Account'
+                  'Criar Conta'
                 )}
               </Button>
 
@@ -179,21 +157,16 @@ export default function RegisterPage() {
                   <div className="w-full border-t"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-background text-muted-foreground">or</span>
+                  <span className="px-2 bg-background text-muted-foreground">ou</span>
                 </div>
               </div>
-
-              {/* Social Register */}
-              <Button type="button" variant="outline" className="w-full" disabled={loading}>
-                Sign up with Google
-              </Button>
             </form>
 
             {/* Sign In Link */}
             <p className="text-center text-sm text-muted-foreground mt-6">
-              Already have an account?{' '}
+              Já tem uma conta?{' '}
               <Link href="/login" className="text-blue-600 hover:underline font-medium">
-                Sign in
+                Entrar
               </Link>
             </p>
           </CardContent>

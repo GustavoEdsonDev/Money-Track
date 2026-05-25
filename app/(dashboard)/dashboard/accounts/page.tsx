@@ -28,10 +28,10 @@ const accountIcons: Record<string, React.ComponentType<{ className?: string }>> 
 };
 
 const accountLabels: Record<string, string> = {
-  cash: 'Cash',
-  bank: 'Bank Account',
-  credit_card: 'Credit Card',
-  investment: 'Investment',
+  cash: 'Dinheiro',
+  bank: 'Conta Bancária',
+  credit_card: 'Cartão de Crédito',
+  investment: 'Investimento',
 };
 
 export default function AccountsPage() {
@@ -45,7 +45,7 @@ export default function AccountsPage() {
       setDeletingId(id);
       await deleteAccount(id);
     } catch (error) {
-      alert('Failed to delete account');
+      alert('Falha ao excluir conta');
     } finally {
       setDeletingId(null);
     }
@@ -61,7 +61,7 @@ export default function AccountsPage() {
       if (error instanceof Error) {
         alert(error.message);
       } else {
-        alert('Failed to update account');
+        alert('Falha ao atualizar conta');
       }
     } finally {
       setUpdatingId(null);
@@ -73,12 +73,12 @@ export default function AccountsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Accounts</h1>
-          <p className="text-muted-foreground mt-2">Manage your bank accounts and cash wallets</p>
+          <h1 className="text-3xl font-bold tracking-tight">Contas</h1>
+          <p className="text-muted-foreground mt-2">Gerencie suas contas bancárias e carteiras em dinheiro</p>
         </div>
         <Button className="gap-2" onClick={() => setShowForm(!showForm)}>
           <Plus className="size-4" />
-          {showForm ? 'Cancel' : 'New Account'}
+          {showForm ? 'Cancelar' : 'Nova Conta'}
         </Button>
       </div>
 
@@ -133,22 +133,22 @@ export default function AccountsPage() {
 
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Account?</AlertDialogTitle>
+                        <AlertDialogTitle>Excluir conta?</AlertDialogTitle>
 
                         <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete this Account.
+                          Esta ação não pode ser desfeita. Isso irá excluir
+                          permanentemente esta conta.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
 
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
 
                         <AlertDialogAction
                           onClick={() => handleDelete(account.id)}
                           className="bg-red-600 hover:bg-red-700"
                         >
-                          Delete
+                          Excluir
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -158,14 +158,14 @@ export default function AccountsPage() {
               <CardContent>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Initial Balance</span>
+                    <span className="text-sm text-muted-foreground">Saldo Inicial</span>
                     <span className="text-lg font-semibold">
-                      ${account.initial_balance.toFixed(2)}
+                      R$ {account.initial_balance.toFixed(2)}
                     </span>
                   </div>
                   <div className="pt-2 border-t">
                     <p className="text-xs text-muted-foreground">
-                      Created {new Date(account.created_at).toLocaleDateString()}
+                      Criada em {new Date(account.created_at).toLocaleDateString('pt-BR')}
                     </p>
                   </div>
                 </div>
@@ -178,7 +178,7 @@ export default function AccountsPage() {
       {/* Empty State */}
       {accounts.length === 0 && !loading && (
         <div className="text-center py-8">
-          <p className="text-muted-foreground">No accounts yet. Create one to get started!</p>
+          <p className="text-muted-foreground">Nenhuma conta ainda. Crie uma para começar!</p>
         </div>
       )}
     </div>

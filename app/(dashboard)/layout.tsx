@@ -38,32 +38,32 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     router.push("/login")
   }
   const menuItems: MenuItem[] = [
-    {
-      href: '/dashboard',
-      label: 'Dashboard',
-      icon: LayoutDashboard,
-      exact: true,
-    },
-    {
-      href: '/dashboard/transactions',
-      label: 'Transactions',
-      icon: ArrowLeftRight,
-    },
-    {
-      href: '/dashboard/categories',
-      label: 'Categories',
-      icon: Tag,
-    },
-    {
-      href: '/dashboard/accounts',
-      label: 'Accounts',
-      icon: Wallet,
-    },
-    {
-      href: '/dashboard/budgets',
-      label: 'Budgets',
-      icon: Target,
-    },
+{
+  href: '/dashboard',
+  label: 'Início',
+  icon: LayoutDashboard,
+  exact: true,
+},
+{
+  href: '/dashboard/transactions',
+  label: 'Transações',
+  icon: ArrowLeftRight,
+},
+{
+  href: '/dashboard/categories',
+  label: 'Categorias',
+  icon: Tag,
+},
+{
+  href: '/dashboard/accounts',
+  label: 'Contas',
+  icon: Wallet,
+},
+{
+  href: '/dashboard/budgets',
+  label: 'Orçamentos',
+  icon: Target,
+},
   ];
 
   // Get current page label

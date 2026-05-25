@@ -39,7 +39,7 @@ export default function CategoriesPage() {
       setDeletingId(id);
       await deleteCategory(id);
     } catch (error) {
-      alert("Failed to delete category");
+      alert("Falha ao excluir categoria");
     } finally {
       setDeletingId(null);
     }
@@ -55,7 +55,7 @@ export default function CategoriesPage() {
       if (error instanceof Error) {
         alert(error.message);
       } else {
-        alert("Failed to update category");
+        alert("Falha ao atualizar categoria");
       }
     } finally {
       setUpdatingId(null);
@@ -70,14 +70,14 @@ export default function CategoriesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Categories</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Categorias</h1>
           <p className="text-muted-foreground mt-2">
-            Manage your spending and income categories
+            Gerencie suas categorias de gastos e receitas
           </p>
         </div>
         <Button className="gap-2" onClick={() => setShowForm(!showForm)}>
           <Plus className="size-4" />
-          {showForm ? "Cancel" : "New Category"}
+          {showForm ? "Cancelar" : "Nova Categoria"}
         </Button>
       </div>
 
@@ -95,7 +95,7 @@ export default function CategoriesPage() {
       {/* Expense Categories */}
       {expenseCategories.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold mb-4">Expense Categories</h2>
+          <h2 className="text-lg font-semibold mb-4">Categorias de Despesas</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {expenseCategories.map((category) => (
               <Card
@@ -108,12 +108,12 @@ export default function CategoriesPage() {
                       className="size-12 rounded-lg flex items-center justify-center"
                       style={{ backgroundColor: `${category.color}20` }}
                     >
-                      {renderCategoryIcon(category.icon, 'size-6')}
+                      {renderCategoryIcon(category.icon, "size-6")}
                     </div>
                     <div>
                       <h3 className="font-semibold">{category.name}</h3>
                       <Badge variant="outline" className="mt-1 text-xs">
-                        Expense
+                        Despesa
                       </Badge>
                     </div>
                   </div>
@@ -123,40 +123,40 @@ export default function CategoriesPage() {
                       updatingId={updatingId}
                       onUpdate={handleUpdate}
                     />
-                   <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        disabled={deletingId === category.id}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Category?</AlertDialogTitle>
-
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete this Category.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-
-                        <AlertDialogAction
-                          onClick={() => handleDelete(category.id)}
-                          className="bg-red-600 hover:bg-red-700"
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={deletingId === category.id}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
                         >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                          <Trash2 className="size-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Excluir categoria?</AlertDialogTitle>
+
+                          <AlertDialogDescription>
+                            Esta ação não pode ser desfeita. Isso irá excluir
+                            permanentemente esta categoria.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+
+                          <AlertDialogAction
+                            onClick={() => handleDelete(category.id)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Excluir
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -174,7 +174,7 @@ export default function CategoriesPage() {
       {/* Income Categories */}
       {incomeCategories.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold mb-4">Income Categories</h2>
+          <h2 className="text-lg font-semibold mb-4">Categorias de Receitas</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {incomeCategories.map((category) => (
               <Card
@@ -187,7 +187,7 @@ export default function CategoriesPage() {
                       className="size-12 rounded-lg flex items-center justify-center"
                       style={{ backgroundColor: `${category.color}20` }}
                     >
-                      {renderCategoryIcon(category.icon, 'size-6')}
+                      {renderCategoryIcon(category.icon, "size-6")}
                     </div>
                     <div>
                       <h3 className="font-semibold">{category.name}</h3>
@@ -195,7 +195,7 @@ export default function CategoriesPage() {
                         variant="outline"
                         className="mt-1 text-xs bg-green-100 text-green-800"
                       >
-                        Income
+                        Receita
                       </Badge>
                     </div>
                   </div>
@@ -207,48 +207,39 @@ export default function CategoriesPage() {
                       onUpdate={handleUpdate}
                     />
                     <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        disabled={deletingId === category.id}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Category?</AlertDialogTitle>
-
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete this Category.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-
-                        <AlertDialogAction
-                          onClick={() => handleDelete(category.id)}
-                          className="bg-red-600 hover:bg-red-700"
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={deletingId === category.id}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
                         >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                  {/* <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(category.id)}
-                    disabled={deletingId === category.id}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="size-4" />
-                  </Button> */}
+                          <Trash2 className="size-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Excluir categoria?</AlertDialogTitle>
+
+                          <AlertDialogDescription>
+                            Esta ação não pode ser desfeita. Isso irá excluir
+                            permanentemente esta categoria.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+
+                          <AlertDialogAction
+                            onClick={() => handleDelete(category.id)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Excluir
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -267,7 +258,7 @@ export default function CategoriesPage() {
       {categories.length === 0 && !loading && (
         <div className="text-center py-8">
           <p className="text-muted-foreground">
-            No categories yet. Create one to get started!
+            Nenhuma categoria ainda. Crie uma para começar!
           </p>
         </div>
       )}
