@@ -5,7 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { AlertCircle, Loader2, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
+import { commonIcons, iconMap, renderCategoryIcon } from '@/lib/category-icons';
 
 interface AddCategoryFormProps {
   onSuccess?: () => void;
@@ -16,11 +24,9 @@ export function AddCategoryForm({ onSuccess, onCancel }: AddCategoryFormProps) {
   const [name, setName] = useState('');
   const [type, setType] = useState<'income' | 'expense'>('expense');
   const [color, setColor] = useState('#FF6B6B');
-  const [icon, setIcon] = useState('📁');
+  const [icon, setIcon] = useState('folder');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const commonEmojis = ['📁', '🍽️', '🚗', '🎬', '🛍️', '💡', '💰', '📚', '🏥', '✈️'];
 
   const commonColors = [
     '#FF6B6B', // Red
@@ -64,7 +70,7 @@ export function AddCategoryForm({ onSuccess, onCancel }: AddCategoryFormProps) {
       setName('');
       setType('expense');
       setColor('#FF6B6B');
-      setIcon('📁');
+      setIcon('folder');
 
       onSuccess?.();
     } catch (err: any) {
@@ -84,7 +90,7 @@ export function AddCategoryForm({ onSuccess, onCancel }: AddCategoryFormProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="flex gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
-              <AlertCircle className="size-4 text-red-600 mt-0.5 flex-shrink-0" />
+              <AlertCircle className="size-4 text-red-600 mt-0.5 shrink-0" />
               <p className="text-sm text-red-600">{error}</p>
             </div>
           )}
@@ -105,37 +111,50 @@ export function AddCategoryForm({ onSuccess, onCancel }: AddCategoryFormProps) {
           {/* Type */}
           <div className="space-y-2">
             <Label htmlFor="type">Type</Label>
-            <select
-              id="type"
-              value={type}
-              onChange={(e) => setType(e.target.value as 'income' | 'expense')}
-              disabled={loading}
-              className="w-full px-3 py-2 rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="expense">Expense</option>
-              <option value="income">Income</option>
-            </select>
+            <Select value={type} onValueChange={(value) => setType(value as 'income' | 'expense')}>
+              <SelectTrigger id="type" disabled={loading}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="expense">
+                  <div className="flex items-center gap-2">
+                    <ArrowDownLeft className="size-4" />
+                    Expense
+                  </div>
+                </SelectItem>
+                <SelectItem value="income">
+                  <div className="flex items-center gap-2">
+                    <ArrowUpRight className="size-4" />
+                    Income
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Icon */}
           <div className="space-y-2">
             <Label>Icon</Label>
             <div className="flex gap-2 flex-wrap">
-              {commonEmojis.map((emoji) => (
-                <button
-                  key={emoji}
-                  type="button"
-                  onClick={() => setIcon(emoji)}
-                  disabled={loading}
-                  className={`size-10 flex items-center justify-center text-2xl rounded-lg border-2 transition-all ${
-                    icon === emoji
-                      ? 'border-primary bg-primary/10'
-                      : 'border-muted hover:border-primary/50'
-                  }`}
-                >
-                  {emoji}
-                </button>
-              ))}
+              {commonIcons.map(({ id, label }) => {
+                const IconComponent = iconMap[id];
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setIcon(id)}
+                    disabled={loading}
+                    className={`size-10 flex items-center justify-center rounded-lg border-2 transition-all ${
+                      icon === id
+                        ? 'border-primary bg-primary/10'
+                        : 'border-muted hover:border-primary/50'
+                    }`}
+                    title={label}
+                  >
+                    <IconComponent className="size-5" />
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -162,10 +181,10 @@ export function AddCategoryForm({ onSuccess, onCancel }: AddCategoryFormProps) {
           <div className="space-y-2">
             <Label>Preview</Label>
             <div
-              className="size-12 rounded-lg flex items-center justify-center text-2xl"
+              className="size-12 rounded-lg flex items-center justify-center"
               style={{ backgroundColor: color }}
             >
-              {icon}
+              {renderCategoryIcon(icon, 'size-6')}
             </div>
           </div>
 

@@ -14,6 +14,7 @@ import {
 import { AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCategories } from '@/hooks/use-categories';
+import { renderCategoryIcon } from '@/lib/category-icons';
 
 export function AddBudgetForm({
   onSuccess,
@@ -81,7 +82,7 @@ export function AddBudgetForm({
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="flex gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-600">
-              <AlertCircle className="size-4 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="size-4 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
@@ -97,7 +98,10 @@ export function AddBudgetForm({
                   .filter((c) => c.type === 'expense')
                   .map((category) => (
                     <SelectItem key={category.id} value={category.id}>
-                      {category.icon} {category.name}
+                      <div className="flex items-center gap-2">
+                        {renderCategoryIcon(category.icon, 'size-4')}
+                        {category.name}
+                      </div>
                     </SelectItem>
                   ))}
               </SelectContent>
@@ -125,13 +129,15 @@ export function AddBudgetForm({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                    <SelectItem key={m} value={String(m)}>
-                      {new Date(2024, m - 1).toLocaleString('default', {
-                        month: 'long',
-                      })}
-                    </SelectItem>
-                  ))}
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => {
+                    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                    const monthEmojis = ['🎄', '❄️', '🌸', '🌼', '🌻', '🌞', '🎆', '🌙', '🍂', '🎃', '⛈️', '🎅'];
+                    return (
+                      <SelectItem key={m} value={String(m)}>
+                        {monthEmojis[m - 1]} {monthNames[m - 1]}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
@@ -146,7 +152,7 @@ export function AddBudgetForm({
                   {Array.from({ length: 3 }, (_, i) => currentYear - 1 + i).map(
                     (y) => (
                       <SelectItem key={y} value={String(y)}>
-                        {y}
+                        📅 {y}
                       </SelectItem>
                     )
                   )}

@@ -5,8 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { AlertCircle, Loader2, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
 import { useCategories } from '@/hooks/use-categories';
+import { renderCategoryIcon } from '@/lib/category-icons';
 
 interface AddTransactionFormProps {
   onSuccess?: () => void;
@@ -135,35 +143,45 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
           {/* Type */}
           <div className="space-y-2">
             <Label htmlFor="type">Type</Label>
-            <select
-              id="type"
-              value={type}
-              onChange={(e) => setType(e.target.value as 'income' | 'expense')}
-              disabled={loading}
-              className="w-full px-3 py-2 rounded-md border border-input bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="expense">Expense</option>
-              <option value="income">Income</option>
-            </select>
+            <Select value={type} onValueChange={(value) => setType(value as 'income' | 'expense')}>
+              <SelectTrigger id="type" disabled={loading}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="expense">
+                  <div className="flex items-center gap-2">
+                    <ArrowDownLeft className="size-4" />
+                    Expense
+                  </div>
+                </SelectItem>
+                <SelectItem value="income">
+                  <div className="flex items-center gap-2">
+                    <ArrowUpRight className="size-4" />
+                    Income
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Category */}
           <div className="space-y-2">
             <Label htmlFor="category">Category (Optional)</Label>
-            <select
-              id="category"
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              disabled={loading || filteredCategories.length === 0}
-              className="w-full px-3 py-2 rounded-md border border-input bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="">Select a category</option>
-              {filteredCategories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+            <Select value={categoryId} onValueChange={setCategoryId}>
+              <SelectTrigger id="category" disabled={loading || filteredCategories.length === 0}>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {filteredCategories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    <div className="flex items-center gap-2">
+                      {renderCategoryIcon(category.icon, 'size-4')}
+                      {category.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {filteredCategories.length === 0 && (
               <p className="text-xs text-muted-foreground">
                 No categories available for this type

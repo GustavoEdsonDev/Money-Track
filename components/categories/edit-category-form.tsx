@@ -1,11 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, ArrowUpRight, ArrowDownLeft } from "lucide-react";
+import { commonIcons, iconMap } from "@/lib/category-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -98,17 +105,25 @@ export function EditCategoryForm({
           <div className="space-y-2">
             <Label htmlFor={`type-${category.id}`}>Tipo</Label>
 
-            <select
-              id={`type-${category.id}`}
-              value={type}
-              onChange={(event) =>
-                setType(event.target.value as Category["type"])
-              }
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            >
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-            </select>
+            <Select value={type} onValueChange={(value) => setType(value as Category["type"])}>
+              <SelectTrigger id={`type-${category.id}`}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="income">
+                  <div className="flex items-center gap-2">
+                    <ArrowUpRight className="size-4" />
+                    Income
+                  </div>
+                </SelectItem>
+                <SelectItem value="expense">
+                  <div className="flex items-center gap-2">
+                    <ArrowDownLeft className="size-4" />
+                    Expense
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
@@ -124,13 +139,27 @@ export function EditCategoryForm({
 
           <div className="space-y-2">
             <Label htmlFor={`icon-${category.id}`}>Ícone</Label>
-
-            <Input
-              id={`icon-${category.id}`}
-              value={icon}
-              onChange={(event) => setIcon(event.target.value)}
-              placeholder="Ex: 🍔"
-            />
+            <div className="flex gap-2 flex-wrap">
+              {commonIcons.map(({ id, label }) => {
+                const IconComponent = iconMap[id];
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setIcon(id)}
+                    disabled={isUpdating}
+                    className={`size-10 flex items-center justify-center rounded-lg border-2 transition-all ${
+                      icon === id
+                        ? 'border-primary bg-primary/10'
+                        : 'border-muted hover:border-primary/50'
+                    }`}
+                    title={label}
+                  >
+                    <IconComponent className="size-5" />
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <DialogFooter>

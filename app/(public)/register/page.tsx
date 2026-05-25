@@ -69,7 +69,7 @@ export default function RegisterPage() {
               {/* Error Message */}
               {error && (
                 <div className="flex gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
-                  <AlertCircle className="size-4 text-red-600 mt-0.5 flex-shrink-0" />
+                  <AlertCircle className="size-4 text-red-600 mt-0.5 shrink-0" />
                   <p className="text-sm text-red-600">{error}</p>
                 </div>
               )}
