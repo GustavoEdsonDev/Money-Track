@@ -4,15 +4,16 @@ import { getAuthenticatedSupabase, handleApiError, NotFoundError } from '@/lib/s
 // GET - Buscar orçamento por ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { supabase, user } = await getAuthenticatedSupabase();
 
     const { data: budget, error } = await supabase
       .from('budgets')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .single();
 
@@ -29,15 +30,16 @@ export async function GET(
 // PUT - Atualizar orçamento
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { supabase, user } = await getAuthenticatedSupabase();
 
     const { data: existingBudget } = await supabase
       .from('budgets')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .single();
 
@@ -50,7 +52,7 @@ export async function PUT(
     const { data, error } = await supabase
       .from('budgets')
       .update(updates)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .select()
       .single();

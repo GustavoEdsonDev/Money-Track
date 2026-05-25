@@ -4,15 +4,16 @@ import { getAuthenticatedSupabase, handleApiError, NotFoundError } from '@/lib/s
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { supabase, user } = await getAuthenticatedSupabase();
 
     const { data, error } = await supabase
       .from('accounts')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .single();
 
@@ -28,16 +29,17 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { supabase, user } = await getAuthenticatedSupabase();
 
     // Verify ownership
     const { data: existingAccount } = await supabase
       .from('accounts')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .single();
 
@@ -50,7 +52,7 @@ export async function PUT(
     const { data, error } = await supabase
       .from('accounts')
       .update(updates)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .select()
       .single();

@@ -36,13 +36,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { useTransactions } from "@/hooks/use-transactions";
+import { useTransactions, type Transaction } from "@/hooks/use-transactions";
 import { AddTransactionForm } from "@/components/transactions/add-transaction-form";
 import { EditTransactionForm } from "@/components/transactions/edit-transaction-form";
-
-// Ajuste esse import para o caminho real do seu tipo Transaction
-// Exemplo:
-// import type { Transaction } from "@/types/transaction";
 
 export default function TransactionsPage() {
   const {
