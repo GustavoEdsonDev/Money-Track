@@ -4,15 +4,16 @@ import { getAuthenticatedSupabase, handleApiError, NotFoundError } from '@/lib/s
 // GET - Buscar categoria por ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { supabase, user } = await getAuthenticatedSupabase();
 
     const { data: category, error } = await supabase
       .from('categories')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .single();
 
@@ -29,9 +30,10 @@ export async function GET(
 // PUT - Atualizar categoria
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { supabase, user } = await getAuthenticatedSupabase();
     const { name, type, color, icon } = await req.json();
     const { data, error } = await supabase
@@ -42,7 +44,7 @@ export async function PUT(
         color,
         icon,
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .select()
       .single();
