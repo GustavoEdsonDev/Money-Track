@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle, Loader2 } from 'lucide-react';
+import { useCategories } from '@/hooks/use-categories';
 
 interface AddTransactionFormProps {
   onSuccess?: () => void;
@@ -13,13 +14,23 @@ interface AddTransactionFormProps {
 }
 
 export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormProps) {
+  const { categories } = useCategories();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [type, setType] = useState<'income' | 'expense'>('expense');
+  const [categoryId, setCategoryId] = useState('');
   const [transactionDate, setTransactionDate] = useState(new Date().toISOString().split('T')[0]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Filter categories by type
+  const filteredCategories = categories.filter(cat => cat.type === type);
+
+  // Reset category when type changes
+  useEffect(() => {
+    setCategoryId('');
+  }, [type]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +51,7 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
           description,
           amount: parseFloat(amount),
           type,
+          category_id: categoryId || null,
           transaction_date: transactionDate,
         }),
       });
@@ -53,6 +65,7 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
       setTitle('');
       setDescription('');
       setAmount('');
+      setCategoryId('');
       setType('expense');
       setTransactionDate(new Date().toISOString().split('T')[0]);
 
@@ -74,7 +87,7 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="flex gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
-              <AlertCircle className="size-4 text-red-600 mt-0.5 flex-shrink-0" />
+              <AlertCircle className="size-4 text-red-600 mt-0.5 shrink-0" />
               <p className="text-sm text-red-600">{error}</p>
             </div>
           )}
@@ -132,6 +145,30 @@ export function AddTransactionForm({ onSuccess, onCancel }: AddTransactionFormPr
               <option value="expense">Expense</option>
               <option value="income">Income</option>
             </select>
+          </div>
+
+          {/* Category */}
+          <div className="space-y-2">
+            <Label htmlFor="category">Category (Optional)</Label>
+            <select
+              id="category"
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              disabled={loading || filteredCategories.length === 0}
+              className="w-full px-3 py-2 rounded-md border border-input bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="">Select a category</option>
+              {filteredCategories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+            {filteredCategories.length === 0 && (
+              <p className="text-xs text-muted-foreground">
+                No categories available for this type
+              </p>
+            )}
           </div>
 
           {/* Date */}

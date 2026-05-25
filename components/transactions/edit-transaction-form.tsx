@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { useTransactions, type Transaction } from "@/hooks/use-transactions";
+import { useCategories } from "@/hooks/use-categories";
 
 type EditTransactionFormProps = {
   transaction: Transaction;
@@ -29,6 +30,7 @@ export function EditTransactionForm({
   updatingId,
   onUpdate,
 }: EditTransactionFormProps) {
+  const { categories } = useCategories();
   const [open, setOpen] = useState(false);
 
   const [title, setTitle] = useState(transaction.title);
@@ -37,13 +39,23 @@ export function EditTransactionForm({
   );
   const [amount, setAmount] = useState(String(transaction.amount));
   const [type, setType] = useState(transaction.type);
+  const [categoryId, setCategoryId] = useState(transaction.category_id ?? "");
   const [transactionDate, setTransactionDate] = useState(
     transaction.transaction_date
       ? transaction.transaction_date.split("T")[0]
       : "",
   );
 
+  const filteredCategories = categories.filter(cat => cat.type === type);
   const isUpdating = updatingId === transaction.id;
+
+  // Reset category when type changes
+  useEffect(() => {
+    const currentCategory = categories.find(cat => cat.id === categoryId);
+    if (currentCategory && currentCategory.type !== type) {
+      setCategoryId("");
+    }
+  }, [type, categoryId, categories]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -68,6 +80,7 @@ export function EditTransactionForm({
       description: description.trim(),
       amount: Number(amount),
       type,
+      category_id: categoryId || null,
       transaction_date: transactionDate,
     });
 
@@ -144,6 +157,30 @@ export function EditTransactionForm({
               <option value="income">Income</option>
               <option value="expense">Expense</option>
             </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor={`category-${transaction.id}`}>Categoria (Opcional)</Label>
+
+            <select
+              id={`category-${transaction.id}`}
+              value={categoryId}
+              onChange={(event) => setCategoryId(event.target.value)}
+              disabled={filteredCategories.length === 0}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            >
+              <option value="">Selecione uma categoria</option>
+              {filteredCategories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+            {filteredCategories.length === 0 && (
+              <p className="text-xs text-muted-foreground">
+                Nenhuma categoria disponível para este tipo
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
