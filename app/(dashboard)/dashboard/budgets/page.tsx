@@ -5,9 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
-import { useBudgets } from '@/hooks/use-budgets';
+import { useBudgets, type Budget } from '@/hooks/use-budgets';
 import { useCategories } from '@/hooks/use-categories';
 import { AddBudgetForm } from '@/components/budgets/add-budget-form';
+import { EditBudgetForm } from '@/components/budgets/edit-budget-form';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,10 +22,11 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function BudgetsPage() {
-  const { budgets, loading, deleteBudget, fetchBudgets } = useBudgets();
+  const { budgets, loading, deleteBudget, updateBudget, fetchBudgets } = useBudgets();
   const { categories } = useCategories();
   const [showForm, setShowForm] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
     try {
@@ -34,6 +36,23 @@ export default function BudgetsPage() {
       alert('Failed to delete budget');
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleUpdate = async (id: string, updates: Partial<Budget>) => {
+    try {
+      setUpdatingId(id);
+      await updateBudget(id, updates);
+      console.log('Orçamento atualizado');
+    } catch (error) {
+      console.error('Erro ao atualizar:', error);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert('Failed to update budget');
+      }
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -116,7 +135,13 @@ export default function BudgetsPage() {
                             </Badge>
                           </div>
                         </div>
-                    <AlertDialog>
+                        <div className="flex gap-1">
+                          <EditBudgetForm
+                            budget={budget}
+                            updatingId={updatingId}
+                            onUpdate={handleUpdate}
+                          />
+                          <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
                         variant="ghost"
@@ -150,6 +175,7 @@ export default function BudgetsPage() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
+                        </div>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-3">

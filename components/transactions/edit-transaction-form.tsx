@@ -16,9 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-// Ajuste esse import para o local real do seu tipo Transaction
-// Exemplo:
-// import type { Transaction } from "@/types/transaction";
+import { useTransactions, type Transaction } from "@/hooks/use-transactions";
 
 type EditTransactionFormProps = {
   transaction: Transaction;
