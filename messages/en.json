@@ -1,0 +1,104 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "accounts": "Accounts",
+    "categories": "Categories",
+    "budgets": "Budgets",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "login": "Sign In",
+    "signup": "Sign Up",
+    "register": "Register",
+    "rememberMe": "Remember me",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "invalidCredentials": "Invalid email or password",
+    "accountCreated": "Account created successfully",
+    "fullName": "Full Name"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "balance": "Balance",
+    "income": "Income",
+    "expenses": "Expenses",
+    "transactions": "Recent Transactions"
+  },
+  "transactions": {
+    "title": "Transactions",
+    "add": "Add Transaction",
+    "edit": "Edit Transaction",
+    "delete": "Delete",
+    "type": "Type",
+    "expense": "Expense",
+    "income": "Income",
+    "amount": "Amount",
+    "category": "Category",
+    "description": "Description",
+    "date": "Date",
+    "selectCategory": "Select a category"
+  },
+  "accounts": {
+    "title": "Accounts",
+    "add": "Add Account",
+    "edit": "Edit Account",
+    "delete": "Delete",
+    "name": "Account Name",
+    "type": "Account Type",
+    "balance": "Balance",
+    "currency": "Currency"
+  },
+  "categories": {
+    "title": "Categories",
+    "add": "Add Category",
+    "edit": "Edit Category",
+    "delete": "Delete",
+    "name": "Category Name",
+    "icon": "Icon",
+    "type": "Type",
+    "expense": "Expense",
+    "income": "Income"
+  },
+  "budgets": {
+    "title": "Budgets",
+    "add": "Add Budget",
+    "edit": "Edit Budget",
+    "delete": "Delete",
+    "name": "Budget Name",
+    "limit": "Limit",
+    "category": "Category",
+    "period": "Period",
+    "spent": "Spent"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "profileInfo": "Profile Information",
+    "fullName": "Full Name",
+    "email": "Email",
+    "save": "Save Changes",
+    "security": "Security",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "account": "Account",
+    "deleteAccount": "Delete Account"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "close": "Close"
+  }
+}

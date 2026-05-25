@@ -1,0 +1,104 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "transactions": "Transações",
+    "accounts": "Contas",
+    "categories": "Categorias",
+    "budgets": "Orçamentos",
+    "settings": "Configurações",
+    "logout": "Sair"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Senha",
+    "login": "Entrar",
+    "signup": "Registrar",
+    "register": "Criar Conta",
+    "rememberMe": "Lembrar-me",
+    "dontHaveAccount": "Não tem uma conta?",
+    "alreadyHaveAccount": "Já tem uma conta?",
+    "invalidCredentials": "Email ou senha inválidos",
+    "accountCreated": "Conta criada com sucesso",
+    "fullName": "Nome Completo"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "balance": "Saldo",
+    "income": "Receita",
+    "expenses": "Despesas",
+    "transactions": "Transações Recentes"
+  },
+  "transactions": {
+    "title": "Transações",
+    "add": "Adicionar Transação",
+    "edit": "Editar Transação",
+    "delete": "Deletar",
+    "type": "Tipo",
+    "expense": "Despesa",
+    "income": "Receita",
+    "amount": "Valor",
+    "category": "Categoria",
+    "description": "Descrição",
+    "date": "Data",
+    "selectCategory": "Selecione uma categoria"
+  },
+  "accounts": {
+    "title": "Contas",
+    "add": "Adicionar Conta",
+    "edit": "Editar Conta",
+    "delete": "Deletar",
+    "name": "Nome da Conta",
+    "type": "Tipo de Conta",
+    "balance": "Saldo",
+    "currency": "Moeda"
+  },
+  "categories": {
+    "title": "Categorias",
+    "add": "Adicionar Categoria",
+    "edit": "Editar Categoria",
+    "delete": "Deletar",
+    "name": "Nome da Categoria",
+    "icon": "Ícone",
+    "type": "Tipo",
+    "expense": "Despesa",
+    "income": "Receita"
+  },
+  "budgets": {
+    "title": "Orçamentos",
+    "add": "Adicionar Orçamento",
+    "edit": "Editar Orçamento",
+    "delete": "Deletar",
+    "name": "Nome do Orçamento",
+    "limit": "Limite",
+    "category": "Categoria",
+    "period": "Período",
+    "spent": "Gasto"
+  },
+  "settings": {
+    "title": "Configurações",
+    "profile": "Perfil",
+    "profileInfo": "Informações do Perfil",
+    "fullName": "Nome Completo",
+    "email": "Email",
+    "save": "Salvar Mudanças",
+    "security": "Segurança",
+    "changePassword": "Alterar Senha",
+    "currentPassword": "Senha Atual",
+    "newPassword": "Nova Senha",
+    "confirmPassword": "Confirmar Senha",
+    "account": "Conta",
+    "deleteAccount": "Deletar Conta"
+  },
+  "common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Deletar",
+    "edit": "Editar",
+    "add": "Adicionar",
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "confirm": "Confirmar",
+    "close": "Fechar"
+  }
+}
