@@ -16,61 +16,51 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-// Ajuste esse import para o local real do seu tipo Transaction
-// Exemplo:
-// import type { Transaction } from "@/types/transaction";
+import { useCategories, type Category } from "@/hooks/use-categories";
 
 type EditCategoryFormProps = {
-  transaction: Category;
+  category: Category;
   updatingId: string | null;
   onUpdate: (id: string, updates: Partial<Category>) => Promise<void>;
 };
 
-export function EditTransactionForm({
-  transaction,
+export function EditCategoryForm({
+  category,
   updatingId,
   onUpdate,
 }: EditCategoryFormProps) {
   const [open, setOpen] = useState(false);
 
-  const [title, setTitle] = useState(transaction.title);
-  const [description, setDescription] = useState(
-    transaction.description ?? "",
-  );
-  const [amount, setAmount] = useState(String(transaction.amount));
-  const [type, setType] = useState(transaction.type);
-  const [transactionDate, setTransactionDate] = useState(
-    transaction.transaction_date
-      ? transaction.transaction_date.split("T")[0]
-      : "",
-  );
+  const [name, setName] = useState(category.name);
+  const [type, setType] = useState(category.type);
+  const [color, setColor] = useState(category.color);
+  const [icon, setIcon] = useState(category.icon);
 
-  const isUpdating = updatingId === transaction.id;
+  const isUpdating = updatingId === category.id;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!title.trim()) {
-      alert("O título não pode ficar vazio");
+    if (!name.trim()) {
+      alert("O nome não pode ficar vazio");
       return;
     }
 
-    if (!amount || Number(amount) <= 0) {
-      alert("O valor precisa ser maior que zero");
+    if (!color.trim()) {
+      alert("A cor é obrigatória");
       return;
     }
 
-    if (!transactionDate) {
-      alert("A data é obrigatória");
+    if (!icon.trim()) {
+      alert("O ícone é obrigatório");
       return;
     }
 
-    await onUpdate(transaction.id, {
-      title: title.trim(),
-      description: description.trim(),
-      amount: Number(amount),
+    await onUpdate(category.id, {
+      name: name.trim(),
       type,
-      transaction_date: transactionDate,
+      color: color.trim(),
+      icon: icon.trim(),
     });
 
     setOpen(false);
@@ -86,57 +76,30 @@ export function EditTransactionForm({
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Editar transação</DialogTitle>
+          <DialogTitle>Editar categoria</DialogTitle>
 
           <DialogDescription>
-            Altere os dados da transação abaixo.
+            Altere os dados da categoria abaixo.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor={`title-${transaction.id}`}>Título</Label>
+            <Label htmlFor={`name-${category.id}`}>Nome</Label>
 
             <Input
-              id={`title-${transaction.id}`}
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              placeholder="Ex: Mercado"
+              id={`name-${category.id}`}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Ex: Alimentação"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`description-${transaction.id}`}>
-              Descrição
-            </Label>
-
-            <Input
-              id={`description-${transaction.id}`}
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              placeholder="Ex: Compra do mês"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor={`amount-${transaction.id}`}>Valor</Label>
-
-            <Input
-              id={`amount-${transaction.id}`}
-              type="number"
-              step="0.01"
-              min="0"
-              value={amount}
-              onChange={(event) => setAmount(event.target.value)}
-              placeholder="Ex: 150.00"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor={`type-${transaction.id}`}>Tipo</Label>
+            <Label htmlFor={`type-${category.id}`}>Tipo</Label>
 
             <select
-              id={`type-${transaction.id}`}
+              id={`type-${category.id}`}
               value={type}
               onChange={(event) =>
                 setType(event.target.value as Category["type"])
@@ -149,13 +112,24 @@ export function EditTransactionForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`date-${transaction.id}`}>Data</Label>
+            <Label htmlFor={`color-${category.id}`}>Cor</Label>
 
             <Input
-              id={`date-${transaction.id}`}
-              type="date"
-              value={transactionDate}
-              onChange={(event) => setTransactionDate(event.target.value)}
+              id={`color-${category.id}`}
+              type="color"
+              value={color}
+              onChange={(event) => setColor(event.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor={`icon-${category.id}`}>Ícone</Label>
+
+            <Input
+              id={`icon-${category.id}`}
+              value={icon}
+              onChange={(event) => setIcon(event.target.value)}
+              placeholder="Ex: 🍔"
             />
           </div>
 
