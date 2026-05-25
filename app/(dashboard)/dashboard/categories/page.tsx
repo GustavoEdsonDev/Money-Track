@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useCategories, type Category } from "@/hooks/use-categories";
+import { renderCategoryIcon, iconMap } from "@/lib/category-icons";
 import { AddCategoryForm } from "@/components/categories/add-category-form";
 import { EditCategoryForm } from "@/components/categories/edit-category-form";
 import {
@@ -104,10 +105,10 @@ export default function CategoriesPage() {
                 <CardHeader className="flex flex-row items-start justify-between space-y-0">
                   <div className="flex items-center gap-3">
                     <div
-                      className="size-12 rounded-lg flex items-center justify-center text-2xl"
+                      className="size-12 rounded-lg flex items-center justify-center"
                       style={{ backgroundColor: `${category.color}20` }}
                     >
-                      {category.icon}
+                      {renderCategoryIcon(category.icon, 'size-6')}
                     </div>
                     <div>
                       <h3 className="font-semibold">{category.name}</h3>
@@ -183,10 +184,10 @@ export default function CategoriesPage() {
                 <CardHeader className="flex flex-row items-start justify-between space-y-0">
                   <div className="flex items-center gap-3">
                     <div
-                      className="size-12 rounded-lg flex items-center justify-center text-2xl"
+                      className="size-12 rounded-lg flex items-center justify-center"
                       style={{ backgroundColor: `${category.color}20` }}
                     >
-                      {category.icon}
+                      {renderCategoryIcon(category.icon, 'size-6')}
                     </div>
                     <div>
                       <h3 className="font-semibold">{category.name}</h3>

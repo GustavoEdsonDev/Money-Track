@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Banknote, Building2, CreditCard, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { useAccounts, type Account } from '@/hooks/use-accounts';
 import { AddAccountForm } from '@/components/accounts/add-account-form';
@@ -20,11 +20,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-const accountIcons: Record<string, string> = {
-  cash: '💵',
-  bank: '🏦',
-  credit_card: '💳',
-  investment: '📈',
+const accountIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  cash: Banknote,
+  bank: Building2,
+  credit_card: CreditCard,
+  investment: TrendingUp,
 };
 
 const accountLabels: Record<string, string> = {
@@ -100,8 +100,11 @@ export default function AccountsPage() {
             <Card key={account.id} className="hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
                 <div className="flex items-center gap-3">
-                  <div className="text-3xl">
-                    {accountIcons[account.type] || '🏦'}
+                  <div>
+                    {(() => {
+                      const Icon = accountIcons[account.type] || Building2;
+                      return <Icon className="size-8" />;
+                    })()}
                   </div>
                   <div>
                     <h3 className="font-semibold">{account.name}</h3>

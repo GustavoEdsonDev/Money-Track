@@ -1,11 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -17,8 +23,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { useTransactions, type Transaction } from "@/hooks/use-transactions";
-import { useCategories } from "@/hooks/use-categories";
-
+import { useCategories } from "@/hooks/use-categories";import { renderCategoryIcon } from '@/lib/category-icons';
 type EditTransactionFormProps = {
   transaction: Transaction;
   updatingId: string | null;
@@ -146,36 +151,45 @@ export function EditTransactionForm({
           <div className="space-y-2">
             <Label htmlFor={`type-${transaction.id}`}>Tipo</Label>
 
-            <select
-              id={`type-${transaction.id}`}
-              value={type}
-              onChange={(event) =>
-                setType(event.target.value as Transaction["type"])
-              }
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            >
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-            </select>
+            <Select value={type} onValueChange={(value) => setType(value as Transaction["type"])}>
+              <SelectTrigger id={`type-${transaction.id}`}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="income">
+                  <div className="flex items-center gap-2">
+                    <ArrowUpRight className="size-4" />
+                    Income
+                  </div>
+                </SelectItem>
+                <SelectItem value="expense">
+                  <div className="flex items-center gap-2">
+                    <ArrowDownLeft className="size-4" />
+                    Expense
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor={`category-${transaction.id}`}>Categoria (Opcional)</Label>
 
-            <select
-              id={`category-${transaction.id}`}
-              value={categoryId}
-              onChange={(event) => setCategoryId(event.target.value)}
-              disabled={filteredCategories.length === 0}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            >
-              <option value="">Selecione uma categoria</option>
-              {filteredCategories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+            <Select value={categoryId} onValueChange={setCategoryId}>
+              <SelectTrigger id={`category-${transaction.id}`} disabled={filteredCategories.length === 0}>
+                <SelectValue placeholder="Selecione uma categoria" />
+              </SelectTrigger>
+              <SelectContent>
+                {filteredCategories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    <div className="flex items-center gap-2">
+                      {renderCategoryIcon(category.icon, 'size-4')}
+                      {category.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {filteredCategories.length === 0 && (
               <p className="text-xs text-muted-foreground">
                 Nenhuma categoria disponível para este tipo
