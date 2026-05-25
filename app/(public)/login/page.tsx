@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Wallet, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 
@@ -16,6 +16,21 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Restore saved session data on component mount
+  useEffect(() => {
+    try {
+      const savedSession = localStorage.getItem('moneytrack_session');
+      if (savedSession) {
+        const sessionData = JSON.parse(savedSession);
+        setEmail(sessionData.email);
+        setRememberMe(true);
+      }
+    } catch (error) {
+      console.error('Error restoring session:', error);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +38,20 @@ export default function LoginPage() {
 
     try {
       await signIn(email, password);
+      
+      // Save session to localStorage if "Remember me" is checked
+      if (rememberMe) {
+        const sessionData = {
+          email,
+          rememberMe: true,
+          timestamp: new Date().toISOString(),
+        };
+        localStorage.setItem('moneytrack_session', JSON.stringify(sessionData));
+      } else {
+        // Clear localStorage if "Remember me" is unchecked
+        localStorage.removeItem('moneytrack_session');
+      }
+      
       router.push('/dashboard');
     } catch (err: any) {
       // Melhorar mensagem de erro
@@ -102,12 +131,15 @@ export default function LoginPage() {
               {/* Remember Me */}
               <div className="flex items-center justify-between text-sm">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" className="rounded" disabled={loading} />
+                  <input 
+                    type="checkbox" 
+                    className="rounded" 
+                    disabled={loading}
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
                   Remember me
                 </label>
-                <Link href="#" className="text-blue-600 hover:underline">
-                  Forgot password?
-                </Link>
               </div>
 
               {/* Login Button */}
