@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, TrendingUp, Wallet, BarChart3, Lock } from 'lucide-react';
+import { ArrowRight, TrendingUp, Wallet, BarChart3, Lock, Code, Mail } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -28,11 +28,14 @@ export default function Home() {
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-block mb-4 px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+            ✨ Developed by Gustavo Edson
+          </div>
           <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 mb-6">
             Take Control of Your <span className="text-blue-600">Finances</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            MoneyTrack helps you manage your money, track expenses, and achieve your financial goals
+            A modern, open-source financial management application built to help you track expenses, manage accounts, and achieve your financial goals with ease and simplicity.
           </p>
           <div className="flex gap-4 justify-center">
             <Button size="lg" asChild>
@@ -137,43 +140,43 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-300 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
+          <div className="grid md:grid-cols-2 gap-12 mb-8">
             <div>
-              <h3 className="font-semibold text-white mb-4">MoneyTrack</h3>
-              <p className="text-sm">Taking control of your finances, one transaction at a time</p>
+              <div className="flex items-center gap-2 mb-4">
+                <Wallet className="size-6 text-blue-600" />
+                <h3 className="text-xl font-semibold text-white">MoneyTrack</h3>
+              </div>
+              <p className="text-sm mb-4">
+                A modern financial management application designed to help you take control of your money with ease and confidence.
+              </p>
+              <p className="text-sm text-gray-400">
+                Built with Next.js, TypeScript, and Supabase for a seamless experience.
+              </p>
             </div>
             <div>
-              <h4 className="font-semibold text-white mb-4">Product</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="#" className="hover:text-white">Features</Link></li>
-                <li><Link href="#" className="hover:text-white">Pricing</Link></li>
-                <li><Link href="#" className="hover:text-white">Security</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-white mb-4">Company</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="#" className="hover:text-white">About</Link></li>
-                <li><Link href="#" className="hover:text-white">Blog</Link></li>
-                <li><Link href="#" className="hover:text-white">Contact</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-white mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="#" className="hover:text-white">Privacy</Link></li>
-                <li><Link href="#" className="hover:text-white">Terms</Link></li>
-                <li><Link href="#" className="hover:text-white">Cookie Policy</Link></li>
-              </ul>
+              <h4 className="font-semibold text-white mb-4">Connect with the Developer</h4>
+              <div className="space-y-3">
+                <a 
+                  href="https://github.com/GustavoEdsonDev" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-blue-400 transition text-sm"
+                >
+                  <Code className="size-4" />
+                  <span>GitHub: GustavoEdsonDev</span>
+                </a>
+                <a 
+                  href="mailto:gustavoedsonunnunes@gmail.com"
+                  className="flex items-center gap-2 hover:text-blue-400 transition text-sm"
+                >
+                  <Mail className="size-4" />
+                  <span>gustavoedsonunnunes@gmail.com</span>
+                </a>
+              </div>
             </div>
           </div>
-          <div className="border-t border-gray-800 pt-8 flex justify-between items-center text-sm">
-            <p>&copy; 2024 MoneyTrack. All rights reserved.</p>
-            <div className="flex gap-4">
-              <Link href="#" className="hover:text-white">Twitter</Link>
-              <Link href="#" className="hover:text-white">Facebook</Link>
-              <Link href="#" className="hover:text-white">LinkedIn</Link>
-            </div>
+          <div className="border-t border-gray-800 pt-8 text-center text-sm">
+            <p>&copy; 2024 MoneyTrack - Developed by Gustavo Edson. All rights reserved.</p>
           </div>
         </div>
       </footer>
