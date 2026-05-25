@@ -5,8 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { useAccounts } from '@/hooks/use-accounts';
+import { useAccounts, type Account } from '@/hooks/use-accounts';
 import { AddAccountForm } from '@/components/accounts/add-account-form';
+import { EditAccountForm } from '@/components/accounts/edit-account-form';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,9 +35,10 @@ const accountLabels: Record<string, string> = {
 };
 
 export default function AccountsPage() {
-  const { accounts, loading, deleteAccount, fetchAccounts } = useAccounts();
+  const { accounts, loading, deleteAccount, updateAccount, fetchAccounts } = useAccounts();
   const [showForm, setShowForm] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
     try {
@@ -46,6 +48,23 @@ export default function AccountsPage() {
       alert('Failed to delete account');
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleUpdate = async (id: string, updates: Partial<Account>) => {
+    try {
+      setUpdatingId(id);
+      await updateAccount(id, updates);
+      console.log('Conta atualizada');
+    } catch (error) {
+      console.error('Erro ao atualizar:', error);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert('Failed to update account');
+      }
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -91,6 +110,12 @@ export default function AccountsPage() {
                     </Badge>
                   </div>
                 </div>
+                <div className="flex gap-1">
+                  <EditAccountForm
+                    account={account}
+                    updatingId={updatingId}
+                    onUpdate={handleUpdate}
+                  />
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -125,6 +150,7 @@ export default function AccountsPage() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">

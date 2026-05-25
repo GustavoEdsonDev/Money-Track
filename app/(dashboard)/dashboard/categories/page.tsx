@@ -11,8 +11,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useCategories } from "@/hooks/use-categories";
+import { useCategories, type Category } from "@/hooks/use-categories";
 import { AddCategoryForm } from "@/components/categories/add-category-form";
+import { EditCategoryForm } from "@/components/categories/edit-category-form";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,10 +27,11 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function CategoriesPage() {
-  const { categories, loading, deleteCategory, fetchCategories } =
+  const { categories, loading, deleteCategory, updateCategory, fetchCategories } =
     useCategories();
   const [showForm, setShowForm] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
     try {
@@ -39,6 +41,23 @@ export default function CategoriesPage() {
       alert("Failed to delete category");
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleUpdate = async (id: string, updates: Partial<Category>) => {
+    try {
+      setUpdatingId(id);
+      await updateCategory(id, updates);
+      console.log("Categoria atualizada");
+    } catch (error) {
+      console.error("Erro ao atualizar:", error);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Failed to update category");
+      }
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -97,7 +116,13 @@ export default function CategoriesPage() {
                       </Badge>
                     </div>
                   </div>
-                 <AlertDialog>
+                  <div className="flex gap-1">
+                    <EditCategoryForm
+                      category={category}
+                      updatingId={updatingId}
+                      onUpdate={handleUpdate}
+                    />
+                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
                         variant="ghost"
@@ -131,6 +156,7 @@ export default function CategoriesPage() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div
@@ -173,7 +199,13 @@ export default function CategoriesPage() {
                     </div>
                   </div>
 
-                  <AlertDialog>
+                  <div className="flex gap-1">
+                    <EditCategoryForm
+                      category={category}
+                      updatingId={updatingId}
+                      onUpdate={handleUpdate}
+                    />
+                    <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
                         variant="ghost"
@@ -216,6 +248,7 @@ export default function CategoriesPage() {
                   >
                     <Trash2 className="size-4" />
                   </Button> */}
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div
