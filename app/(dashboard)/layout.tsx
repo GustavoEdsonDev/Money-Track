@@ -1,6 +1,13 @@
-"use client"
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+"use client";
+
+import Link from "next/link";
+import { ReactNode, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth-context";
+import { ThemeSwitch } from "@/components/theme-swith/theme-switch";
+
 import {
   LayoutDashboard,
   ArrowLeftRight,
@@ -9,143 +16,183 @@ import {
   Target,
   Settings,
   LogOut,
-
   Menu,
   X,
-} from 'lucide-react';
-import { ReactNode, useState, useEffect } from 'react';
-import { useAuth } from '@/lib/auth-context';
-import { useRouter, usePathname } from "next/navigation";
-import { useTransactions } from '@/hooks/use-transactions';
+} from "lucide-react";
 
 interface MenuItem {
   href: string;
   label: string;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   exact?: boolean;
 }
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+const menuItems: MenuItem[] = [
+  {
+    href: "/dashboard",
+    label: "Início",
+    icon: LayoutDashboard,
+    exact: true,
+  },
+  {
+    href: "/dashboard/transactions",
+    label: "Transações",
+    icon: ArrowLeftRight,
+  },
+  {
+    href: "/dashboard/categories",
+    label: "Categorias",
+    icon: Tag,
+  },
+  {
+    href: "/dashboard/accounts",
+    label: "Contas",
+    icon: Wallet,
+  },
+  {
+    href: "/dashboard/budgets",
+    label: "Orçamentos",
+    icon: Target,
+  },
+];
 
-  const {signOut, loading, user} = useAuth()
-  const router = useRouter()
-  const pathname = usePathname()
-  const [currentPageLabel, setCurrentPageLabel] = useState('')
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const { signOut, loading, user } = useAuth();
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const userName = user?.user_metadata?.full_name ?? "Usuário";
+  const userEmail = user?.email ?? "";
+  const userInitial = userName.charAt(0).toUpperCase();
+
+  const currentItem = menuItems.find((item) =>
+    item.exact ? pathname === item.href : pathname.startsWith(item.href)
+  );
+
+  const currentPageLabel =
+    pathname === "/dashboard/settings"
+      ? "Configurações"
+      : currentItem?.label ?? "Início";
 
   const handleSignOut = async () => {
     await signOut();
-    router.push("/login")
-  }
-  const menuItems: MenuItem[] = [
-{
-  href: '/dashboard',
-  label: 'Início',
-  icon: LayoutDashboard,
-  exact: true,
-},
-{
-  href: '/dashboard/transactions',
-  label: 'Transações',
-  icon: ArrowLeftRight,
-},
-{
-  href: '/dashboard/categories',
-  label: 'Categorias',
-  icon: Tag,
-},
-{
-  href: '/dashboard/accounts',
-  label: 'Contas',
-  icon: Wallet,
-},
-{
-  href: '/dashboard/budgets',
-  label: 'Orçamentos',
-  icon: Target,
-},
-  ];
-
-  // Get current page label
-  useEffect(() => {
-    const currentItem = menuItems.find(item => 
-      item.exact ? pathname === item.href : pathname.startsWith(item.href)
-    );
-    setCurrentPageLabel(currentItem?.label || 'Dashboard');
-  }, [pathname]);
+    router.push("/login");
+  };
 
   return (
-    <div className="flex h-screen bg-background flex-col sm:flex-row" suppressHydrationWarning>
-      {/* Overlay - Mobile */}
+    <div
+      className="flex h-screen flex-col bg-background text-foreground sm:flex-row"
+      suppressHydrationWarning
+    >
+      {/* Overlay Mobile */}
       {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-30 sm:hidden"
+        <button
+          type="button"
+          aria-label="Fechar menu lateral"
+          className="fixed inset-0 z-30 bg-black/50 sm:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed sm:static inset-y-0 left-0 w-64 bg-card flex flex-col border-r transform transition-transform duration-300 z-40 sm:z-0 order-2 sm:order-1 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full sm:translate-x-0'
-      }`}>
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 order-2 flex w-64 flex-col border-r bg-card transition-transform duration-300 sm:static sm:z-0 sm:order-1 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0"
+        }`}
+      >
         {/* Logo */}
-        <div className="p-4 sm:p-6 border-b flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Wallet className="size-5 sm:size-6 text-primary" />
-            <h1 className="text-lg sm:text-xl font-bold">MoneyTrack</h1>
-          </div>
-          <button 
+        <div className="flex items-center justify-between border-b p-4 sm:p-6">
+          <Link
+            href="/dashboard"
             onClick={() => setSidebarOpen(false)}
-            className="sm:hidden p-1 hover:bg-muted rounded transition-colors"
+            className="flex items-center gap-2"
+          >
+            <Wallet className="size-5 text-primary sm:size-6" />
+            <span className="text-lg font-bold sm:text-xl">MoneyTrack</span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(false)}
+            className="rounded p-1 transition-colors hover:bg-muted sm:hidden"
+            aria-label="Fechar menu"
           >
             <X className="size-5" />
           </button>
         </div>
 
-        {/* Main Navigation */}
-        <nav className="p-2 sm:p-4 space-y-1 sm:space-y-2 flex-1 overflow-auto">
-          {menuItems.map(({ href, label, icon: Icon }) => (
-            <Link 
-              key={href} 
-              href={href}
-              onClick={() => setSidebarOpen(false)}
-            >
+        {/* Theme Switch */}
+        <div className="flex items-center justify-between border-b px-4 py-3">
+          <span className="text-sm text-muted-foreground">Tema escuro</span>
+          
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 space-y-1 overflow-auto p-2 sm:space-y-2 sm:p-4">
+          {menuItems.map(({ href, label, icon: Icon, exact }) => {
+            const isActive = exact
+              ? pathname === href
+              : pathname.startsWith(href);
+
+            return (
               <Button
-                variant="ghost"
+                key={href}
+                asChild
+                variant={isActive ? "secondary" : "ghost"}
                 className="w-full justify-start gap-3 text-xs sm:text-sm"
               >
-                <Icon className="size-4 shrink-0" />
-                <span>{label}</span>
+                <Link href={href} onClick={() => setSidebarOpen(false)}>
+                  <Icon className="size-4 shrink-0" />
+                  <span>{label}</span>
+                </Link>
               </Button>
-            </Link>
-          ))}
+            );
+          })}
         </nav>
-        <div className="p-2 sm:p-4 border-t">
+
+        {/* Bottom Area */}
+        <div className="border-t p-2 sm:p-4">
           {/* User Profile */}
-          <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-            <div className="size-8 sm:size-10 rounded-full bg-muted flex items-center justify-center shrink-0">
-              <span className="font-semibold text-xs sm:text-sm">{user?.user_metadata?.full_name?.charAt(0).toUpperCase()}</span>
+          <div className="mb-3 flex items-center gap-2 sm:mb-4 sm:gap-3">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted sm:size-10">
+              <span className="text-xs font-semibold sm:text-sm">
+                {userInitial}
+              </span>
             </div>
-            <div className="flex-1 hidden sm:block">
-              <p className="font-semibold text-xs sm:text-sm truncate">{user?.user_metadata?.full_name}</p>
-              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+
+            <div className="hidden flex-1 sm:block">
+              <p className="truncate text-xs font-semibold sm:text-sm">
+                {userName}
+              </p>
+              <p className="truncate text-xs text-muted-foreground">
+                {userEmail}
+              </p>
             </div>
           </div>
+
           <div className="space-y-1 sm:space-y-2">
-            <Link 
-              href="/dashboard/settings" 
-              className="block"
-              onClick={() => setSidebarOpen(false)}
+            <Button
+              asChild
+              variant={pathname === "/dashboard/settings" ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2 text-xs sm:text-sm"
+              size="sm"
             >
-              <Button variant="ghost" className="w-full justify-start gap-2 text-xs sm:text-sm" size="sm">
+              <Link
+                href="/dashboard/settings"
+                onClick={() => setSidebarOpen(false)}
+              >
                 <Settings className="size-4 shrink-0" />
-                <span>Settings</span>
-              </Button>
-            </Link>
-            <Button 
-              variant="ghost" 
-              className="w-full justify-start gap-2 text-red-600 text-xs sm:text-sm" 
-              size="sm" 
+                <span>Configurações</span>
+              </Link>
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="w-full justify-start gap-2 text-xs text-red-600 hover:bg-red-50 hover:text-red-700 sm:text-sm dark:hover:bg-red-950/30"
+              size="sm"
               onClick={() => {
                 setSidebarOpen(false);
                 handleSignOut();
@@ -153,30 +200,35 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               disabled={loading}
             >
               <LogOut className="size-4 shrink-0" />
-              <span>Logout</span>
+              <span>Sair</span>
             </Button>
           </div>
         </div>
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden order-1 sm:order-2">
+      <div className="order-1 flex flex-1 flex-col overflow-hidden sm:order-2">
         {/* Top Bar */}
-        <header className="h-12 sm:h-16 border-b bg-card px-3 sm:px-6 py-2 sm:py-4 flex items-center justify-between shrink-0 gap-3 sm:gap-4">
-          <div className="flex-1 flex items-center gap-2 sm:gap-4">
+        <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b bg-card px-3 py-2 sm:h-16 sm:px-6 sm:py-4">
+          <ThemeSwitch />
+          <div className="flex flex-1 items-center gap-2 sm:gap-4">
             <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="sm:hidden p-1 hover:bg-muted rounded transition-colors"
+              type="button"
+              onClick={() => setSidebarOpen(true)}
+              className="rounded p-1 transition-colors hover:bg-muted sm:hidden"
+              aria-label="Abrir menu"
             >
               <Menu className="size-5" />
             </button>
-            <h2 className="text-sm sm:text-base font-semibold md:hidden">
+
+            <h2 className="text-sm font-semibold md:hidden">
               {currentPageLabel}
             </h2>
           </div>
+
           <div className="flex items-center gap-2 sm:gap-4">
-            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs sm:text-sm font-semibold cursor-pointer hover:bg-muted/80 transition-colors">
-             {user?.user_metadata?.full_name?.charAt(0).toUpperCase()}
+            <div className="flex size-8 cursor-pointer items-center justify-center rounded-full bg-muted text-xs font-semibold transition-colors hover:bg-muted/80 sm:text-sm">
+              {userInitial}
             </div>
           </div>
         </header>

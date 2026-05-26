@@ -1,9 +1,29 @@
-'use client';
+import type { Metadata } from "next";
+import { ThemeProvider } from "@/components/theme-provider/theme-provider";
+import "@/app/globals.css";
 
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Wallet } from 'lucide-react';
+export const metadata: Metadata = {
+  title: "MoneyTrack",
+  description: "Controle financeiro pessoal",
+};
 
-export default function PublicLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
 }
