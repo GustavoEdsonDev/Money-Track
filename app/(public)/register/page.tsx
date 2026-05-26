@@ -1,10 +1,16 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Wallet, AlertCircle, Loader2 } from 'lucide-react';
+import { Wallet, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -13,72 +19,101 @@ import { useAuth } from '@/lib/auth-context';
 export default function RegisterPage() {
   const router = useRouter();
   const { signUp, loading } = useAuth();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [agreeTerms, setAgreeTerms] = useState(false);
+
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     setError('');
     setSuccess('');
+
+    if (!name.trim()) {
+      setError('Informe seu nome completo');
+      return;
+    }
+
+    if (!email.trim()) {
+      setError('Informe seu e-mail');
+      return;
+    }
+
+    if (!password) {
+      setError('Informe sua senha');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('A senha precisa ter pelo menos 6 caracteres');
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError('As senhas não coincidem');
       return;
     }
 
-    if (!agreeTerms) {
-      setError('Você precisa aceitar os termos e condições');
-      return;
-    }
-
     try {
       await signUp(email, password, name);
+
       setSuccess('Conta criada! Verifique seu e-mail para confirmar.');
+
       setTimeout(() => {
         router.push('/login');
       }, 2000);
-    } catch (err: any) {
-      setError(err.message || 'Falha ao criar conta');
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : 'Falha ao criar conta';
+
+      setError(message);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 text-foreground">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center gap-2">
-            <Wallet className="size-8 text-blue-600" />
-            <span className="text-2xl font-bold text-blue-600">MoneyTrack</span>
-          </div>
+        <div className="mb-8 flex justify-center">
+          <Link href="/" className="flex items-center gap-2">
+            <Wallet className="size-8 text-primary" />
+            <span className="text-2xl font-bold text-primary">
+              MoneyTrack
+            </span>
+          </Link>
         </div>
 
         {/* Register Card */}
-        <Card className="shadow-lg">
+        <Card className="border shadow-lg">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Criar Conta</CardTitle>
-            <CardDescription>Entre no MoneyTrack e comece a gerenciar suas finanças</CardDescription>
+            <CardDescription>
+              Entre no MoneyTrack e comece a gerenciar suas finanças
+            </CardDescription>
           </CardHeader>
+
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Error Message */}
               {error && (
-                <div className="flex gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
-                  <AlertCircle className="size-4 text-red-600 mt-0.5 shrink-0" />
-                  <p className="text-sm text-red-600">{error}</p>
+                <div className="flex gap-2 rounded-lg border border-destructive/20 bg-destructive/10 p-3">
+                  <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
+                  <p className="text-sm text-destructive">{error}</p>
                 </div>
               )}
 
               {/* Success Message */}
               {success && (
-                <div className="flex gap-2 p-3 rounded-lg bg-green-50 border border-green-200">
-                  <AlertCircle className="size-4 text-green-600 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-green-600">{success}</p>
+                <div className="flex gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3">
+                  <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  <p className="text-sm text-emerald-600 dark:text-emerald-400">
+                    {success}
+                  </p>
                 </div>
               )}
 
@@ -138,12 +173,11 @@ export default function RegisterPage() {
                 />
               </div>
 
-
               {/* Register Button */}
-              <Button type="submit" className="w-full" disabled={loading || !agreeTerms}>
+              <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
                   <>
-                    <Loader2 className="size-4 mr-2 animate-spin" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                     Criando conta...
                   </>
                 ) : (
@@ -154,18 +188,24 @@ export default function RegisterPage() {
               {/* Divider */}
               <div className="relative my-4">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t"></div>
+                  <div className="w-full border-t" />
                 </div>
+
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-background text-muted-foreground">ou</span>
+                  <span className="bg-card px-2 text-muted-foreground">
+                    ou
+                  </span>
                 </div>
               </div>
             </form>
 
             {/* Sign In Link */}
-            <p className="text-center text-sm text-muted-foreground mt-6">
+            <p className="mt-6 text-center text-sm text-muted-foreground">
               Já tem uma conta?{' '}
-              <Link href="/login" className="text-blue-600 hover:underline font-medium">
+              <Link
+                href="/login"
+                className="font-medium text-primary hover:underline"
+              >
                 Entrar
               </Link>
             </p>

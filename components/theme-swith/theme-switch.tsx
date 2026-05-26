@@ -26,7 +26,7 @@ export function ThemeSwitch() {
   const isDark = resolvedTheme === "dark";
 
   return (
-    <div className="flex w-full items-center justify-between">
+    <div className="flex w-full items-center justify-between gap-3">
       <p className="text-sm text-muted-foreground">
         {isDark ? "Mudar para o claro" : "Mudar para o escuro"}
       </p>
