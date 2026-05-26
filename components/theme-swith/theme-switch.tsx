@@ -15,35 +15,27 @@ export function ThemeSwitch() {
   }, []);
 
   if (!mounted) {
-    return (
-      <div className="flex w-full items-center justify-between">
-        <span className="text-sm text-muted-foreground ">Tema</span>
-        <div className="h-6 w-11 rounded-full bg-muted" />
-      </div>
-    );
+    return <div className="h-6 w-11 rounded-full bg-muted" />;
   }
 
   const isDark = resolvedTheme === "dark";
 
   return (
-    <div className="flex w-full items-center justify-between gap-3">
-      <p className="text-sm text-muted-foreground">
+    <div className="flex items-center gap-2">
+      <span className="hidden text-sm text-muted-foreground lg:inline">
         {isDark ? "Mudar para o claro" : "Mudar para o escuro"}
-      </p>
+      </span>
 
-      <div className="flex items-center gap-2">
-        <Sun className="size-4 text-muted-foreground" />
+      <Sun className="size-4 text-muted-foreground" />
 
-        <Switch
-        
-          checked={isDark}
-          onCheckedChange={(checked) => {
-            setTheme(checked ? "dark" : "light");
-          }}
-        />
+      <Switch
+        checked={isDark}
+        onCheckedChange={(checked) => {
+          setTheme(checked ? "dark" : "light");
+        }}
+      />
 
-        <Moon className="size-4 text-muted-foreground" />
-      </div>
+      <Moon className="size-4 text-muted-foreground" />
     </div>
   );
 }
