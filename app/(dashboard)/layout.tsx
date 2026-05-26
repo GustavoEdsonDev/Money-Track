@@ -62,7 +62,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   const { signOut, loading, user } = useAuth();
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(!false);
+  const [isDark, SetIsDark] = useState(true);
 
   const userName = user?.user_metadata?.full_name ?? "Usuário";
   const userEmail = user?.email ?? "";
@@ -87,7 +88,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       className="flex h-screen flex-col bg-background text-foreground sm:flex-row"
       suppressHydrationWarning
     >
-      {/* Overlay Mobile */}
+
       {sidebarOpen && (
         <button
           type="button"
@@ -97,13 +98,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         />
       )}
 
-      {/* Sidebar */}
+
       <aside
         className={`fixed inset-y-0 left-0 z-40 order-2 flex w-64 flex-col border-r bg-card transition-transform duration-300 sm:static sm:z-0 sm:order-1 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0"
         }`}
       >
-        {/* Logo */}
+ 
         <div className="flex items-center justify-between border-b p-4 sm:p-6">
           <Link
             href="/dashboard"
@@ -124,13 +125,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </button>
         </div>
 
-        {/* Theme Switch */}
-        <div className="flex items-center justify-between border-b px-4 py-3">
-          <span className="text-sm text-muted-foreground">Tema escuro</span>
+ 
+        <div className="flex items-center justify-between border-b px-4 py-3" >
+          <ThemeSwitch />
+
           
         </div>
 
-        {/* Navigation */}
+
         <nav className="flex-1 space-y-1 overflow-auto p-2 sm:space-y-2 sm:p-4">
           {menuItems.map(({ href, label, icon: Icon, exact }) => {
             const isActive = exact
@@ -153,7 +155,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        {/* Bottom Area */}
+
         <div className="border-t p-2 sm:p-4">
           {/* User Profile */}
           <div className="mb-3 flex items-center gap-2 sm:mb-4 sm:gap-3">
@@ -206,11 +208,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      {/* Main Content */}
+
       <div className="order-1 flex flex-1 flex-col overflow-hidden sm:order-2">
         {/* Top Bar */}
         <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b bg-card px-3 py-2 sm:h-16 sm:px-6 sm:py-4">
-          <ThemeSwitch />
+          
           <div className="flex flex-1 items-center gap-2 sm:gap-4">
             <button
               type="button"
