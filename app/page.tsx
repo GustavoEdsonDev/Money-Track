@@ -61,7 +61,7 @@ export default function Home() {
       <section className="px-4 pb-16 pt-28 sm:px-6 sm:pb-20 sm:pt-32 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           <div className="mb-4 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary sm:px-4 sm:text-sm">
-            ✨ Desenvolvido por Gustavo Edson
+            Desenvolvido por Gustavo Edson
           </div>
 
           <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
